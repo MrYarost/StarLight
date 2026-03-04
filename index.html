@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StarLight | Game Studio</title>
+    <!-- Simple Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+        }
+
+        body {
+            background: #0b0f17;
+            color: #e5e9f0;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            background: #141b2b;
+            border-bottom: 2px solid #2f4870;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #ffd966;
+            letter-spacing: 1px;
+        }
+
+        .logo i {
+            color: #7aa9ff;
+            margin-right: 5px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        nav a {
+            color: #bdd3ff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            background: #1f3450;
+            color: white;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+            padding: 30px 0;
+        }
+
+        .page.active-page {
+            display: block;
+        }
+
+        h1 {
+            font-size: 2.3rem;
+            margin-bottom: 25px;
+            color: #ffde9e;
+            border-left: 4px solid #4a9eff;
+            padding-left: 20px;
+        }
+
+        h2 {
+            color: #c6dbff;
+            margin: 30px 0 20px;
+            font-size: 1.8rem;
+        }
+
+        /* Cards */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .card {
+            background: #1a2538;
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid #324a6b;
+            transition: 0.2s;
+        }
+
+        .card:hover {
+            border-color: #6f9bff;
+            background: #1e2c42;
+        }
+
+        .card h3 {
+            font-size: 1.8rem;
+            color: #ffd966;
+            margin-bottom: 15px;
+        }
+
+        .game-desc {
+            background: #0f1a28;
+            padding: 15px;
+            border-radius: 12px;
+            margin: 15px 0;
+            color: #d0e0ff;
+            border-left: 3px solid #4a9eff;
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background: #264773;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            border: 1px solid #5a7fc0;
+            transition: 0.2s;
+        }
+
+        .btn i {
+            margin-right: 8px;
+            color: #ffd966;
+        }
+
+        .btn:hover {
+            background: #2f5690;
+            border-color: #8ab2ff;
+        }
+
+        .btn-small {
+            padding: 6px 18px;
+            font-size: 0.9rem;
+        }
+
+        /* Team */
+        .team-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .member {
+            background: #1a2538;
+            border-radius: 30px;
+            padding: 25px;
+            width: 260px;
+            text-align: center;
+            border: 1px solid #3d547a;
+        }
+
+        .member i {
+            font-size: 3rem;
+            color: #ffd966;
+            background: #142035;
+            padding: 20px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+        }
+
+        .member h4 {
+            font-size: 1.8rem;
+            color: #ffde9e;
+        }
+
+        .member .role {
+            color: #a5c1ff;
+            font-weight: 600;
+            margin: 8px 0;
+        }
+
+        /* Download table */
+        .download-table {
+            width: 100%;
+            background: #141f30;
+            border-radius: 20px;
+            overflow: hidden;
+            border-collapse: collapse;
+        }
+
+        .download-table th {
+            background: #1f3452;
+            color: #ffde9e;
+            padding: 15px;
+            text-align: left;
+            font-size: 1.2rem;
+        }
+
+        .download-table td {
+            padding: 15px;
+            border-bottom: 1px solid #2a3f60;
+        }
+
+        .download-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .file-size {
+            color: #9bb5de;
+            font-size: 0.9rem;
+            margin-left: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px 0;
+            border-top: 1px solid #253b58;
+            color: #91a9cc;
+            margin-top: 40px;
+        }
+
+        @media (max-width: 600px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            nav ul {
+                gap: 10px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">
+                <i class="fas fa-star"></i> StarLight
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" class="nav-link active" data-page="about">Team</a></li>
+                    <li><a href="#" class="nav-link" data-page="games">Games</a></li>
+                    <li><a href="#" class="nav-link" data-page="download">Download</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- About page -->
+        <section id="about-page" class="page active-page">
+            <h1>About StarLight</h1>
+            <p style="font-size: 1.2rem; margin-bottom: 30px;">Small indie studio making games with heart. We love stars, stories, and creating worlds you'll remember.</p>
+            
+            <h2>Our team</h2>
+            <div class="team-list">
+                <div class="member">
+                    <i class="fas fa-crown"></i>
+                    <h4>Alex</h4>
+                    <div class="role">Game Designer</div>
+                    <p>Creates worlds and stories.</p>
+                </div>
+                <div class="member">
+                    <i class="fas fa-code"></i>
+                    <h4>Elena</h4>
+                    <div class="role">Programmer</div>
+                    <p>Makes games work.</p>
+                </div>
+                <div class="member">
+                    <i class="fas fa-paint-brush"></i>
+                    <h4>Dmitry</h4>
+                    <div class="role">Artist</div>
+                    <p>Draws everything you see.</p>
+                </div>
+            </div>
+
+            <div style="background: #1a2538; padding: 25px; border-radius: 20px; margin-top: 40px;">
+                <h3 style="color: #ffd966; margin-bottom: 10px;">What we believe</h3>
+                <p>Simple games, strong emotions. Every pixel matters.</p>
+            </div>
+        </section>
+
+        <!-- Games page with descriptions -->
+        <section id="games-page" class="page">
+            <h1>Our games</h1>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Nebula Drifter</h3>
+                    <div class="game-desc">
+                        <strong>Space survival roguelike.</strong> You're lost in a nebula. Collect resources, fight enemies, discover secrets. New map every run.
+                    </div>
+                    <p><i class="fas fa-tag"></i> Roguelike / Survival</p>
+                    <p><i class="fas fa-calendar"></i> Out now (2024)</p>
+                    <a href="#" class="btn btn-small download-link" data-game="nebuladrifter"><i class="fas fa-download"></i> Get game</a>
+                </div>
+
+                <div class="card">
+                    <h3>StarLight Chronicles</h3>
+                    <div class="game-desc">
+                        <strong>Cyberpunk visual novel.</strong> You're a courier with a mysterious crystal. Your choices change the story. Multiple endings.
+                    </div>
+                    <p><i class="fas fa-tag"></i> Visual Novel / Cyberpunk</p>
+                    <p><i class="fas fa-calendar"></i> Coming 2025</p>
+                    <a href="#" class="btn btn-small download-link" data-game="chronicles"><i class="fas fa-download"></i> Demo</a>
+                </div>
+
+                <div class="card">
+                    <h3>Lumen & Shadows</h3>
+                    <div class="game-desc">
+                        <strong>Puzzle platformer.</strong> Play as Lumen, a girl who controls light and shadow. Solve puzzles, explore hand-drawn levels.
+                    </div>
+                    <p><i class="fas fa-tag"></i> Puzzle / Platformer</p>
+                    <p><i class="fas fa-calendar"></i> Out now (2023)</p>
+                    <a href="#" class="btn btn-small download-link" data-game="lumen"><i class="fas fa-download"></i> Get game</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Download page -->
+        <section id="download-page" class="page">
+            <h1>Downloads</h1>
+            <p style="margin-bottom: 25px;">All games are DRM-free. Click to download latest versions.</p>
+            
+            <table class="download-table">
+                <thead>
+                    <tr>
+                        <th>Game</th>
+                        <th>Version</th>
+                        <th>Size</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Nebula Drifter</strong></td>
+                        <td>v1.2.4</td>
+                        <td>750 MB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>StarLight Chronicles (demo)</strong></td>
+                        <td>v0.9.1</td>
+                        <td>1.2 GB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Lumen & Shadows</strong></td>
+                        <td>v2.0.0</td>
+                        <td>500 MB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div style="background: #1a2538; border-radius: 16px; padding: 20px; margin-top: 30px;">
+                <h3 style="color: #ffd966;"><i class="fas fa-headphones"></i> Soundtracks</h3>
+                <p>Original music from our games.</p>
+                <a href="#" class="btn btn-small"><i class="fas fa-music"></i> Download OST (300 MB)</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>© 2025 StarLight. Simple games from simple people.</p>
+            <p style="margin-top: 10px;">
+                <i class="fab fa-discord"></i> · 
+                <i class="fab fa-twitter"></i> · 
+                <i class="fab fa-steam"></i>
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        // Simple page switching
+        const links = document.querySelectorAll('.nav-link');
+        const pages = document.querySelectorAll('.page');
+
+        function showPage(pageId) {
+            pages.forEach(p => p.classList.remove('active-page'));
+            document.getElementById(pageId + '-page').classList.add('active-page');
+            
+            links.forEach(l => l.classList.remove('active'));
+            document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+        }
+
+        links.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage(link.dataset.page);
+            });
+        });
+
+        // Optional: handle download buttons from games page
+        document.querySelectorAll('.download-link').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showPage('download');
+                // simple highlight in download table
+                const game = btn.dataset.game;
+                const rows = document.querySelectorAll('.download-table tbody tr');
+                rows.forEach(row => {
+                    row.style.background = 'none';
+                    if (game === 'nebuladrifter' && row.cells[0].innerText.includes('Nebula')) {
+                        row.style.background = '#2a4065';
+                    }
+                    if (game === 'chronicles' && row.cells[0].innerText.includes('Chronicles')) {
+                        row.style.background = '#2a4065';
+                    }
+                    if (game === 'lumen' && row.cells[0].innerText.includes('Lumen')) {
+                        row.style.background = '#2a4065';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
