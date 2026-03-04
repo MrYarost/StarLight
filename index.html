@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StarLight | Game Studio</title>
-    <!-- Simple Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -26,7 +25,6 @@
             padding: 20px;
         }
 
-        /* Header */
         header {
             background: #141b2b;
             border-bottom: 2px solid #2f4870;
@@ -75,7 +73,6 @@
             color: white;
         }
 
-        /* Pages */
         .page {
             display: none;
             padding: 30px 0;
@@ -99,7 +96,6 @@
             font-size: 1.8rem;
         }
 
-        /* Cards */
         .card-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -135,7 +131,6 @@
             border-left: 3px solid #4a9eff;
         }
 
-        /* Buttons */
         .btn {
             display: inline-block;
             background: #264773;
@@ -163,7 +158,6 @@
             font-size: 0.9rem;
         }
 
-        /* Team */
         .team-list {
             display: flex;
             flex-wrap: wrap;
@@ -201,7 +195,6 @@
             margin: 8px 0;
         }
 
-        /* Download table */
         .download-table {
             width: 100%;
             background: #141f30;
@@ -233,13 +226,21 @@
             margin-left: 8px;
         }
 
-        /* Footer */
         .footer {
             text-align: center;
             padding: 30px 0;
             border-top: 1px solid #253b58;
             color: #91a9cc;
             margin-top: 40px;
+        }
+
+        .about-text {
+            background: #1a2538;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 30px 0;
+            font-size: 1.2rem;
+            border-left: 4px solid #ffd966;
         }
 
         @media (max-width: 600px) {
@@ -273,40 +274,34 @@
     </header>
 
     <main class="container">
-        <!-- About page -->
+        <!-- About page with your description -->
         <section id="about-page" class="page active-page">
             <h1>About StarLight</h1>
-            <p style="font-size: 1.2rem; margin-bottom: 30px;">Small indie studio making games with heart. We love stars, stories, and creating worlds you'll remember.</p>
             
-            <h2>Our team</h2>
-            <div class="team-list">
-                <div class="member">
-                    <i class="fas fa-crown"></i>
-                    <h4>Alex</h4>
-                    <div class="role">Game Designer</div>
-                    <p>Creates worlds and stories.</p>
-                </div>
-                <div class="member">
-                    <i class="fas fa-code"></i>
-                    <h4>Elena</h4>
-                    <div class="role">Programmer</div>
-                    <p>Makes games work.</p>
-                </div>
-                <div class="member">
-                    <i class="fas fa-paint-brush"></i>
-                    <h4>Dmitry</h4>
-                    <div class="role">Artist</div>
-                    <p>Draws everything you see.</p>
+            <div class="about-text">
+                <p style="margin-bottom: 15px;"><strong>StarLight</strong> is a label officially founded on March 4, 2026 by MrYarost (Bogdan Yaroshuk), but the first references to the label appeared back in summer 2025 in the game "Maze Go!".</p>
+                <p>What started as a small reference in a game grew into something real. Today we're making games we believe in.</p>
+            </div>
+            
+            <h2>The founder</h2>
+            <div style="display: flex; justify-content: center; margin: 30px 0;">
+                <div class="member" style="width: 300px;">
+                    <i class="fas fa-user-astronaut"></i>
+                    <h4>MrYarost</h4>
+                    <div class="role">Bogdan Yaroshuk</div>
+                    <p>Founder, creator, the one who started it all in 2025.</p>
                 </div>
             </div>
 
-            <div style="background: #1a2538; padding: 25px; border-radius: 20px; margin-top: 40px;">
-                <h3 style="color: #ffd966; margin-bottom: 10px;">What we believe</h3>
-                <p>Simple games, strong emotions. Every pixel matters.</p>
+            <div style="background: #1a2538; padding: 25px; border-radius: 20px;">
+                <h3 style="color: #ffd966; margin-bottom: 10px;">The story</h3>
+                <p>Summer 2025 — first "StarLight" reference appears in Maze Go!.<br>
+                March 4, 2026 — official founding date.<br>
+                Now — making games and building something real.</p>
             </div>
         </section>
 
-        <!-- Games page with descriptions -->
+        <!-- Games page -->
         <section id="games-page" class="page">
             <h1>Our games</h1>
             <div class="card-grid">
@@ -338,6 +333,16 @@
                     <p><i class="fas fa-tag"></i> Puzzle / Platformer</p>
                     <p><i class="fas fa-calendar"></i> Out now (2023)</p>
                     <a href="#" class="btn btn-small download-link" data-game="lumen"><i class="fas fa-download"></i> Get game</a>
+                </div>
+
+                <div class="card">
+                    <h3>Maze Go!</h3>
+                    <div class="game-desc">
+                        <strong>Where it all began.</strong> The first game that mentioned StarLight back in summer 2025. Simple maze runner with style.
+                    </div>
+                    <p><i class="fas fa-tag"></i> Arcade / Maze</p>
+                    <p><i class="fas fa-calendar"></i> 2025</p>
+                    <a href="#" class="btn btn-small"><i class="fas fa-download"></i> Get game</a>
                 </div>
             </div>
         </section>
@@ -375,6 +380,12 @@
                         <td>500 MB</td>
                         <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
                     </tr>
+                    <tr>
+                        <td><strong>Maze Go!</strong></td>
+                        <td>v1.0.3</td>
+                        <td>180 MB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
                 </tbody>
             </table>
 
@@ -388,7 +399,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>© 2025 StarLight. Simple games from simple people.</p>
+            <p>© 2025 StarLight. Founded by MrYarost, 2026.</p>
             <p style="margin-top: 10px;">
                 <i class="fab fa-discord"></i> · 
                 <i class="fab fa-twitter"></i> · 
@@ -398,7 +409,6 @@
     </footer>
 
     <script>
-        // Simple page switching
         const links = document.querySelectorAll('.nav-link');
         const pages = document.querySelectorAll('.page');
 
@@ -417,12 +427,10 @@
             });
         });
 
-        // Optional: handle download buttons from games page
         document.querySelectorAll('.download-link').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('download');
-                // simple highlight in download table
                 const game = btn.dataset.game;
                 const rows = document.querySelectorAll('.download-table tbody tr');
                 rows.forEach(row => {
