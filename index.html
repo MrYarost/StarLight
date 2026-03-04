@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StarLight | Game Studio</title>
+    <title>StarLight | Games & Programs</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         * {
@@ -122,6 +122,17 @@
             margin-bottom: 15px;
         }
 
+        .badge {
+            display: inline-block;
+            background: #2f4870;
+            color: #ffde9e;
+            font-size: 0.8rem;
+            padding: 4px 10px;
+            border-radius: 20px;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
         .game-desc {
             background: #0f1a28;
             padding: 15px;
@@ -220,12 +231,6 @@
             border-bottom: none;
         }
 
-        .file-size {
-            color: #9bb5de;
-            font-size: 0.9rem;
-            margin-left: 8px;
-        }
-
         .footer {
             text-align: center;
             padding: 30px 0;
@@ -266,7 +271,7 @@
             <nav>
                 <ul>
                     <li><a href="#" class="nav-link active" data-page="about">Team</a></li>
-                    <li><a href="#" class="nav-link" data-page="games">Games</a></li>
+                    <li><a href="#" class="nav-link" data-page="games">Games & Programs</a></li>
                     <li><a href="#" class="nav-link" data-page="download">Download</a></li>
                 </ul>
             </nav>
@@ -274,13 +279,13 @@
     </header>
 
     <main class="container">
-        <!-- About page with your description -->
+        <!-- About page -->
         <section id="about-page" class="page active-page">
             <h1>About StarLight</h1>
             
             <div class="about-text">
                 <p style="margin-bottom: 15px;"><strong>StarLight</strong> is a label officially founded on March 4, 2026 by MrYarost (Bogdan Yaroshuk), but the first references to the label appeared back in summer 2025 in the game "Maze Go!".</p>
-                <p>What started as a small reference in a game grew into something real. Today we're making games we believe in.</p>
+                <p>What started as a small reference in a game grew into something real. Today we're making games and programs we believe in.</p>
             </div>
             
             <h2>The founder</h2>
@@ -297,52 +302,44 @@
                 <h3 style="color: #ffd966; margin-bottom: 10px;">The story</h3>
                 <p>Summer 2025 — first "StarLight" reference appears in Maze Go!.<br>
                 March 4, 2026 — official founding date.<br>
-                Now — making games and building something real.</p>
+                Now — making games and programs.</p>
             </div>
         </section>
 
-        <!-- Games page -->
+        <!-- Games & Programs page (updated) -->
         <section id="games-page" class="page">
-            <h1>Our games</h1>
+            <h1>Games & Programs</h1>
+            
+            <h2>🎮 Games</h2>
             <div class="card-grid">
                 <div class="card">
-                    <h3>Nebula Drifter</h3>
+                    <h3>Maze Go! <span class="badge">2025</span></h3>
                     <div class="game-desc">
-                        <strong>Space survival roguelike.</strong> You're lost in a nebula. Collect resources, fight enemies, discover secrets. New map every run.
-                    </div>
-                    <p><i class="fas fa-tag"></i> Roguelike / Survival</p>
-                    <p><i class="fas fa-calendar"></i> Out now (2024)</p>
-                    <a href="#" class="btn btn-small download-link" data-game="nebuladrifter"><i class="fas fa-download"></i> Get game</a>
-                </div>
-
-                <div class="card">
-                    <h3>StarLight Chronicles</h3>
-                    <div class="game-desc">
-                        <strong>Cyberpunk visual novel.</strong> You're a courier with a mysterious crystal. Your choices change the story. Multiple endings.
-                    </div>
-                    <p><i class="fas fa-tag"></i> Visual Novel / Cyberpunk</p>
-                    <p><i class="fas fa-calendar"></i> Coming 2025</p>
-                    <a href="#" class="btn btn-small download-link" data-game="chronicles"><i class="fas fa-download"></i> Demo</a>
-                </div>
-
-                <div class="card">
-                    <h3>Lumen & Shadows</h3>
-                    <div class="game-desc">
-                        <strong>Puzzle platformer.</strong> Play as Lumen, a girl who controls light and shadow. Solve puzzles, explore hand-drawn levels.
-                    </div>
-                    <p><i class="fas fa-tag"></i> Puzzle / Platformer</p>
-                    <p><i class="fas fa-calendar"></i> Out now (2023)</p>
-                    <a href="#" class="btn btn-small download-link" data-game="lumen"><i class="fas fa-download"></i> Get game</a>
-                </div>
-
-                <div class="card">
-                    <h3>Maze Go!</h3>
-                    <div class="game-desc">
-                        <strong>Where it all began.</strong> The first game that mentioned StarLight back in summer 2025. Simple maze runner with style.
+                        <br><em>Maze Go! — Это инновационная игра-лабиринт с элементами RPG и прокачки, где игроку предстоит проходить все более сложные лабиринты, собирать ресурсы и открывать новые возможности.</em>
                     </div>
                     <p><i class="fas fa-tag"></i> Arcade / Maze</p>
-                    <p><i class="fas fa-calendar"></i> 2025</p>
-                    <a href="#" class="btn btn-small"><i class="fas fa-download"></i> Get game</a>
+                    <a href="#" class="btn btn-small download-link" data-game="mazego"><i class="fas fa-download"></i> Download</a>
+                </div>
+
+                <div class="card">
+                    <h3>Car City 3D <span class="badge">2026</span></h3>
+                    <div class="game-desc">
+                        <br><em>Car City 3D — симулятор езды по огромному миру. Садись за руль машины и исследуй места, чувствуя полную свободу.</em>
+                    </div>
+                    <p><i class="fas fa-tag"></i> Racing / 3D</p>
+                    <a href="#" class="btn btn-small download-link" data-game="carcity"><i class="fas fa-download"></i> Download</a>
+                </div>
+
+            <h2 style="margin-top: 40px;">💻 Programs</h2>
+            <div class="card-grid">
+                <div class="card">
+                    <h3>Nexus Браузер <span class="badge">2025</span></h3>
+                    <div class="game-desc">
+                        <strong>Your description here.</strong> <!-- Add your description here -->
+                        <br><em>Write about Nexus Browser - features, why it's special.</em>
+                    </div>
+                    <p><i class="fas fa-tag"></i> Browser / Utility</p>
+                    <a href="#" class="btn btn-small download-link" data-game="nexus"><i class="fas fa-download"></i> Download</a>
                 </div>
             </div>
         </section>
@@ -350,18 +347,36 @@
         <!-- Download page -->
         <section id="download-page" class="page">
             <h1>Downloads</h1>
-            <p style="margin-bottom: 25px;">All games are DRM-free. Click to download latest versions.</p>
+            <p style="margin-bottom: 25px;">All games and programs are DRM-free. Click to download latest versions.</p>
             
             <table class="download-table">
                 <thead>
                     <tr>
-                        <th>Game</th>
+                        <th>Name</th>
                         <th>Version</th>
                         <th>Size</th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td><strong>Maze Go!</strong></td>
+                        <td>v1.0.3</td>
+                        <td>18 MB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Car City 3D</strong></td>
+                        <td>v0.9.5</td>
+                        <td>420 MB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Nexus Браузер</strong></td>
+                        <td>v2.1.0</td>
+                        <td>85 MB</td>
+                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
+                    </tr>
                     <tr>
                         <td><strong>Nebula Drifter</strong></td>
                         <td>v1.2.4</td>
@@ -380,12 +395,6 @@
                         <td>500 MB</td>
                         <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
                     </tr>
-                    <tr>
-                        <td><strong>Maze Go!</strong></td>
-                        <td>v1.0.3</td>
-                        <td>180 MB</td>
-                        <td><a href="#" class="btn btn-small"><i class="fas fa-download"></i> Download</a></td>
-                    </tr>
                 </tbody>
             </table>
 
@@ -399,7 +408,7 @@
 
     <footer class="footer">
         <div class="container">
-            <p>© 2025 StarLight. Founded by MrYarost, 2026.</p>
+            <p>© 2025-2026 StarLight. Founded by MrYarost, 2026.</p>
             <p style="margin-top: 10px;">
                 <i class="fab fa-discord"></i> · 
                 <i class="fab fa-twitter"></i> · 
@@ -427,14 +436,26 @@
             });
         });
 
+        // Handle download buttons from games page
         document.querySelectorAll('.download-link').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 e.preventDefault();
                 showPage('download');
+                
+                // Simple highlight in download table
                 const game = btn.dataset.game;
                 const rows = document.querySelectorAll('.download-table tbody tr');
                 rows.forEach(row => {
                     row.style.background = 'none';
+                    if (game === 'mazego' && row.cells[0].innerText.includes('Maze')) {
+                        row.style.background = '#2a4065';
+                    }
+                    if (game === 'carcity' && row.cells[0].innerText.includes('Car City')) {
+                        row.style.background = '#2a4065';
+                    }
+                    if (game === 'nexus' && row.cells[0].innerText.includes('Nexus')) {
+                        row.style.background = '#2a4065';
+                    }
                     if (game === 'nebuladrifter' && row.cells[0].innerText.includes('Nebula')) {
                         row.style.background = '#2a4065';
                     }
