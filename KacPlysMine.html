@@ -1,1 +1,273 @@
 
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KacPlysMine — Гриферский сервер Minecraft</title>
+    <meta name="description" content="Гриферский сервер Minecraft 1.17-1.21. Никакого доната за деньги, всё за игровую валюту (класы). Честное PvP, экономика, классы, регион-блоки.">
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #dddddd;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .game-card {
+            background: #111111;
+            border: 1px solid #2a2a2a;
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        
+        .game-title {
+            font-size: 48px;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        
+        .game-meta {
+            font-size: 20px;
+            color: #888888;
+            margin-bottom: 15px;
+        }
+        
+        .game-desc {
+            font-size: 18px;
+            margin: 20px 0;
+            line-height: 1.5;
+        }
+        
+        .game-download a {
+            color: #7aa9ff;
+            text-decoration: none;
+            border: 2px solid #7aa9ff;
+            padding: 10px 25px;
+            border-radius: 40px;
+            transition: 0.3s;
+            display: inline-block;
+            font-size: 18px;
+        }
+        
+        .game-download a:hover {
+            background: #7aa9ff;
+            color: black;
+        }
+        
+        .ip-block {
+            background: #1a1a1a;
+            border: 1px solid #7aa9ff;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .ip-address {
+            font-size: 28px;
+            font-weight: bold;
+            font-family: monospace;
+            background: #000000;
+            padding: 12px 24px;
+            border-radius: 40px;
+            display: inline-block;
+            letter-spacing: 1px;
+        }
+        
+        .copy-btn {
+            background: #7aa9ff;
+            border: none;
+            color: black;
+            font-weight: bold;
+            padding: 8px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 15px;
+            transition: 0.2s;
+        }
+        
+        .copy-btn:hover {
+            background: #5a89df;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #111111;
+            border-radius: 15px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        th {
+            background: #1a1a1a;
+            color: #7aa9ff;
+        }
+        
+        .price {
+            color: #ffaa44;
+            font-weight: bold;
+        }
+        
+        .note {
+            font-size: 18px;
+            color: #aaaaaa;
+            text-align: center;
+            margin: 40px 0;
+            padding: 20px;
+            border-top: 1px solid #2a2a2a;
+            border-bottom: 1px solid #2a2a2a;
+        }
+        
+        hr {
+            border: 1px solid #2a2a2a;
+            margin: 30px 0;
+        }
+        
+        h1 {
+            font-size: 64px;
+            margin-bottom: 10px;
+        }
+        
+        h2 {
+            font-size: 32px;
+            margin: 30px 0 20px;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: #2a6b2a;
+            color: white;
+            font-size: 14px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            margin-left: 15px;
+            vertical-align: middle;
+        }
+        
+        .links a {
+            color: #7aa9ff;
+            text-decoration: none;
+            font-size: 20px;
+            margin: 0 10px;
+        }
+        
+        .links a:hover {
+            text-decoration: underline;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            padding-top: 20px;
+            border-top: 1px solid #2a2a2a;
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <center>
+        <h1>⚔️ KacPlysMine ⚔️</h1>
+        <p style="font-size: 20px;">Гриферский выживач | Честное PvP | Без доната за деньги</p>
+        <hr style="width: 80%;">
+    </center>
+
+    <!-- IP блок -->
+    <div class="ip-block">
+        <span class="ip-address" id="server-ip">sponsored-prince.gl.joinmc.link</span>
+        <button class="copy-btn" onclick="copyIP()">📋 Копировать IP</button>
+        <p style="margin-top: 15px; font-size: 16px;">✅ Версии Minecraft: <strong>1.17 — 1.21</strong></p>
+    </div>
+
+    <!-- Что за сервер -->
+    <div class="game-card">
+        <div class="game-title">🌋 Что здесь происходит?</div>
+        <div class="game-desc">
+            <strong>Гриферство</strong> — основа всего. Кради, разрушай, захватывай чужие базы.<br><br>
+            <strong>Нет доната за деньги</strong> — только игровая валюта <strong>класыⓀ</strong>. Покупай привилегии за игру, а не за кошелёк.<br><br>
+            <strong>Честное PvP</strong> — система CombatLogX накажет за логаут в бою.<br><br>
+            <strong>Экономика</strong> — скупщик, магазин блоков, аукцион, охота на мобов.<br><br>
+            <strong>Кланы, дома, варпы, регион-блоки</strong> — выживай как хочешь.
+        </div>
+    </div>
+
+    <!-- Как заработать -->
+    <div class="game-card">
+        <div class="game-title">💰 Как заработать класы?</div>
+        <div class="game-desc">
+            <strong>📦 Скупщик (/seller)</strong> — продавай ресурсы по выгодным ценам.<br>
+            <strong>🛒 Магазин блоков (/shop)</strong> — покупай и продавай стройматериалы стаками.<br>
+            <strong>⚔️ Охота на мобов</strong> — пассивный заработок.
+        </div>
+    </div>
+
+    <!-- Правила -->
+    <div class="game-card">
+        <div class="game-title">📜 Правила (кратко)</div>
+        <div class="game-desc">
+            ❌ Читы, дюпы, багоюзы — <strong>бан 14 дней</strong><br>
+            ❌ Использование читов — <strong>бан 360 дней + сброс аккаунта</strong><br>
+            ❌ Реклама других серверов — <strong>бан 30 дней + сброс аккаунта</strong><br>
+            ❌ Оскорбления, угрозы IRL — <strong>вечный бан</strong><br>
+            ❌ Покупка чего-либо за реальные деньги — <strong>вечный бан по IP</strong><br><br>
+            Полный список — командой <strong>/rules</strong> на сервере.
+        </div>
+    </div>
+
+    <!-- Философия -->
+    <div class="game-card">
+        <div class="game-title">⚡ Философия сервера</div>
+        <div class="game-desc">
+            «Гриферьте кого угодно, где угодно, как угодно.»<br>
+            Админы НЕ возвращают украденное и НЕ откатывают гриферство. Выживайте сами.<br>
+            Всё, что не запрещено — разрешено. Тотальная война допустима.
+        </div>
+    </div>
+
+    <!-- Ссылки -->
+    <center>
+        <div class="links">
+            📢 <a href="https://t.me/kacPlysMineTG" target="_blank">Telegram-канал</a>
+            | 💬 <a href="https://t.me/kacPlysMineTG" target="_blank">Чат</a>
+            | 🌐 <a href="https://mryarost.github.io/StarLight/index.html" target="_blank">Старый сайт</a>
+        </div>
+        
+        <div class="note">
+            IP: sponsored-prince.gl.joinmc.link | Версии: 1.17 — 1.21
+        </div>
+    </center>
+
+    <footer>
+        KacPlysMine — не играй, если не готов потерять всё. ⚔️
+    </footer>
+</div>
+
+<script>
+    function copyIP() {
+        const ipText = document.getElementById('server-ip').innerText;
+        navigator.clipboard.writeText(ipText).then(() => {
+            alert('✅ IP скопирован: ' + ipText);
+        }).catch(() => {
+            alert('❌ Скопируй вручную: ' + ipText);
+        });
+    }
+</script>
+</body>
+</html>
