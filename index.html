@@ -5,177 +5,278 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>StarLight</title>
     <style>
-        body {
-            color: #ffffff;
-            background: radial-gradient(circle at top left, #d6ad4c, #000000 80%);
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            box-sizing: border-box;
         }
-        
-        .game-card {
-            background: #111;
-            border: 1px solid #333;
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px auto;
-            max-width: 800px;
-            text-align: left;
+
+        body {
+            background: radial-gradient(circle at top left, #1a1a2e, #0f0f1a 90%);
+            font-family: 'Segoe UI', Arial, sans-serif;
+            padding: 40px 20px;
+            min-height: 100vh;
         }
-        
-        .game-title {
-            font-size: 48px;
-            color: #ffffff;
+
+        /* Шапка */
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .logo {
+            font-size: 72px;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffd700, #ffaa00);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
             margin-bottom: 10px;
         }
-        
-        .game-meta {
-            font-size: 24px;
+
+        .subtitle {
+            font-size: 20px;
             color: #888;
-            margin-bottom: 15px;
+            letter-spacing: 2px;
         }
-        
-        .game-desc {
-            font-size: 28px;
-            margin: 20px 0;
-            line-height: 1.4;
-        }
-        
-        .game-download {
-            font-size: 32px;
-            margin: 20px 0;
-        }
-        
-        .game-download a {
-            color: #7aa9ff;
-            text-decoration: none;
-            border: 2px solid #7aa9ff;
-            padding: 10px 25px;
-            border-radius: 40px;
-            transition: 0.3s;
-            display: inline-block;
-        }
-        
-        .game-download a:hover {
-            background: #7aa9ff;
-            color: black;
-        }
-        
-        .note {
-            font-size: 36px;
-            color: #ffffff;
-            text-align: center;
-            margin: 40px 0;
-            padding: 20px;
-            border-top: 2px solid #333;
-            border-bottom: 2px solid #333;
-        }
-        
+
         hr {
-            border: 1px solid #333;
-            margin: 30px 0;
+            width: 150px;
+            height: 2px;
+            background: #333;
+            border: none;
+            margin: 20px auto;
         }
-        
-        .status {
+
+        /* Сетка проектов */
+        .projects-grid {
+            max-width: 1300px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        /* Карточка проекта */
+        .project-card {
+            background: rgba(20, 20, 35, 0.8);
+            backdrop-filter: blur(5px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border-color: rgba(255, 215, 0, 0.5);
+        }
+
+        /* Иконка/картинка проекта */
+        .project-icon {
+            height: 180px;
+            background: linear-gradient(135deg, #2a2a3a, #1a1a2a);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 64px;
+            position: relative;
+        }
+
+        .badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: #ff4444;
+            color: white;
+            font-size: 12px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-weight: bold;
+        }
+
+        .badge.new {
+            background: #ffaa00;
+            color: #1a1a2e;
+        }
+
+        /* Информация */
+        .project-info {
+            padding: 20px;
+        }
+
+        .project-title {
             font-size: 24px;
-            color: #4caf50;
-            display: inline-block;
-            margin-left: 15px;
+            font-weight: bold;
+            color: #ffd700;
+            margin-bottom: 8px;
         }
-        
-        .soon {
-            color: #ffaa00;
+
+        .project-meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .project-desc {
+            font-size: 14px;
+            color: #aaa;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        /* Кнопка скачивания */
+        .download-btn {
+            display: inline-block;
+            background: transparent;
+            border: 1px solid #ffd700;
+            color: #ffd700;
+            padding: 8px 20px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .download-btn:hover {
+            background: #ffd700;
+            color: #1a1a2e;
+        }
+
+        /* Нижняя панель */
+        .footer-links {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 30px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-links a {
+            color: #888;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 14px;
+            transition: 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: #ffd700;
+        }
+
+        .copyright {
+            text-align: center;
+            color: #444;
+            font-size: 12px;
+            margin-top: 30px;
+        }
+
+        @media (max-width: 700px) {
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+            .logo {
+                font-size: 48px;
+            }
         }
     </style>
 </head>
 <body>
-    <center>
-        <h1 style="font-size: 64px; margin-bottom: 10px;"> Лейб StarLight💫</h1>
-        <h1 style="font-size: 24px; margin-top: 0;">Вокруг звёзды и сны..</h1>
-        <hr style="width: 80%;">
-        
-        <h2 style="font-size: 64px; margin: 30px 0 20px;">Что мы делаем?</h2>
-        <p style="font-size: 48px; max-width: 1000px; margin: 0 auto 30px;">Мы делаем игры и программы, для удобства и веселья</p>
-        <hr style="width: 80%;">
-        
-        <h2 style="font-size: 64px; margin: 40px 0 30px;">Наши игры и программы</h2>
-    </center>
-
-    <!-- Maze Go! -->
-    <div class="game-card">
-        <div class="game-title">Maze Go! <span style="font-size: 24px; color: #666;">(RU 2025)</span></div>
-        <div class="game-desc">
-            игра про лабиринты на андроид! - игра нормально не вышла, весит 18 МБ.
-        </div>
-        <div class="game-meta">Версия: 1.0 | Размер: 18 МБ | Платформа: Android</div>
-        <div class="game-download">
-            <a href="https://mryarost.itch.io/maze-go" target="_blank">📥 Скачать Maze Go!</a>
-        </div>
+    <div class="header">
+        <div class="logo">StarLight💫</div>
+        <div class="subtitle">Вокруг звёзды и сны..</div>
+        <hr>
     </div>
 
-    <!-- Nexus Браузер -->
-    <div class="game-card">
-        <div class="game-title">Nexus Браузер 2025 <span style="font-size: 24px; color: #666;">(RU 2025)</span></div>
-        <div class="game-desc">
-            замена гуглу и работает на Python, особенности: мало весит, не требовательный в железе, антивирус, лёгкий в управлении
-        </div>
-        <div class="game-meta">
-            Старая версия: 119 МБ | Новая версия 2026: май 2026
-        </div>
-        <div class="game-download">
-            <a href="https://mryarost.github.io/nexus-brauser/" target="_blank">📥 Скачать Nexus Браузер</a>
-        </div>
-    </div>
+    <div class="projects-grid">
 
-    <!-- Car City 3D -->
-    <div class="game-card">
-        <div class="game-title">Car City 3D <span style="font-size: 24px; color: #666;">(EN 2026)</span></div>
-        <div class="game-desc">
-            игра про машину и езды по открытому миру, графика отличная, потянет даже слабое устройство
-        </div>
-        <div class="game-meta">
-            Версия: 1.0.0.0A | Размер: 124 МБ | Платформа: Windows
-        </div>
-        <div class="game-download">
-            <a href="https://github.com/MrYarost/StarLight_Games/releases/download/1.0.0.0A/1.0.0.0A.rar" target="_blank">📥Скачать Car City 3D</a>
-        </div>
-        
-    </div>
-        <div class="game-card">
-        <div class="game-title">7 Ночей В Школе <span style="font-size: 24px; color: #666;">(RU 2026)</span> <span class="status">NEW!</span></div>
-        <div class="game-desc">
-            🎮 7 Ночей в школе — хоррор-выживание, где ты — ночной охранник!
-        </div>
-        <div class="game-meta">
-            Версия: 1.0.0.0 | Размер: 137 МБ (Windows) / 186 МБ (Android) | Платформа: Windows / Android
-        </div>
-        <div class="game-download">
-            <a href="https://mryarost.itch.io/seven-night-in-school" target="_blank">📥Скачать 7 Ночей В Школе</a>
-        </div>
-    </div>
-
-    <center>
-        <div class="note">
-            скоро тут будут дополнятся игры, ждите! 😊
+        <!-- Maze Go! -->
+        <div class="project-card">
+            <div class="project-icon">
+                🧩
+            </div>
+            <div class="project-info">
+                <div class="project-title">Maze Go!</div>
+                <div class="project-meta">Android • 18 МБ</div>
+                <div class="project-desc">Лабиринты на андроид</div>
+                <a href="https://mryarost.itch.io/maze-go" class="download-btn" target="_blank">Скачать</a>
+            </div>
         </div>
 
-        <div style="margin: 50px 0 30px;">
-            <p style="font-size: 32px; display: inline-block; border: 1px solid #333; padding: 15px 30px; border-radius: 50px;">
-                Все ссылки: | <a href="https://mryarost.github.io/StarLight/download.html" style="font-size: 32px; text-decoration: none; color: white;">Все версии игр и программ</a> |
-                <a href="https://mryarost.github.io/StarLight/KacPlysMine.html" style="font-size: 32px; text-decoration: none; color: white;">Сервер KacPlysMine (Minecraft)</a> |
-                <a href="https://t.me/MrYarost_bot" style="font-size: 32px; text-decoration: none; color: white;">связь с разработчиком</a> |
-                <a href="https://discord.gg/ZwkP6HXkxD" style="font-size: 32px; text-decoration: none; color: white;">дискорд</a>
-            </p>
+        <div class="project-card">
+            <div class="project-icon">
+                🌐
+            </div>
+            <div class="project-info">
+                <div class="project-title">Nexus Браузер</div>
+                <div class="project-meta">Windows • ~120 МБ</div>
+                <div class="project-desc">Лёгкий, быстрый, на Python</div>
+                <a href="https://mryarost.github.io/nexus-brauser/" class="download-btn" target="_blank">Скачать</a>
+            </div>
         </div>
-        
-        <div style="height: 60px;"></div>
-    </center>
+        <!-- Car City 3D -->
+        <div class="project-card">
+            <div class="project-icon">
+                🚗
+            </div>
+            <div class="project-info">
+                <div class="project-title">Car City 3D</div>
+                <div class="project-meta">Windows • 124 МБ</div>
+                <div class="project-desc">Аркадная езда по городу</div>
+                <a href="https://github.com/MrYarost/StarLight_Games/releases/download/1.0.0.0A/1.0.0.0A.rar" class="download-btn" target="_blank">Скачать</a>
+            </div>
+        </div>
+
+        <!-- 7 Ночей В Школе -->
+        <div class="project-card">
+            <div class="project-icon">
+                🏫
+            </div>
+            <div class="project-info">
+                <div class="project-title">7 Ночей В Школе</div>
+                <div class="project-meta">Win/Android • 137/186 МБ</div>
+                <div class="project-desc">Хоррор-выживание, ночной охранник</div>
+                <a href="https://mryarost.itch.io/seven-night-in-school" class="download-btn" target="_blank">Скачать</a>
+            </div>
+        </div>
+
+        <!-- Key or Die? -->
+        <div class="project-card">
+            <div class="project-icon">
+                🗝️💀<span class="badge new">NEW</span>
+            </div>
+            <div class="project-info">
+                <div class="project-title">Key or Die?</div>
+                <div class="project-meta">Win/Android • 121/136 МБ</div>
+                <div class="project-desc">Психологический 2D хоррор</div>
+                <a href="#" class="download-btn" style="opacity:0.6; pointer-events:none;">Скачать на EasyCode Lab</a>
+            </div>
+        </div>
+
+        <div class="project-card">
+            <div class="project-icon">
+                ⚔️
+            </div>
+            <div class="project-info">
+                <div class="project-title">Сервер KacPlysMine</div>
+                <div class="project-meta">майнкрафт проект</div>
+                <div class="project-desc">Честное ПВП, донат за класы</div>
+                <a href="https://mryarost.github.io/StarLight/KacPlysMine.html" class="download-btn" target="_blank">Перейти</a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="footer-links">
+        <a href="https://mryarost.github.io/StarLight/download.html">Все версии</a>
+        <a href="https://t.me/MrYarost_bot">Связь с разработчиком</a>
+        <a href="https://discord.gg/ZwkP6HXkxD">Discord</a>
+    </div>
+    <div class="copyright">
+        © 2026 StarLight. Все права защищены.
+    </div>
 </body>
-
 </html>
-
-
-
-
-
-
