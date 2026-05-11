@@ -60,6 +60,34 @@
             color: black;
         }
         
+        /* Переключатель режимов */
+        .sort-buttons {
+            text-align: center;
+            margin: 20px 0 30px;
+        }
+        
+        .sort-btn {
+            background: #1a1a1a;
+            color: #fff;
+            border: 1px solid #ffd700;
+            padding: 10px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        
+        .sort-btn.active {
+            background: #ffd700;
+            color: #000;
+        }
+        
+        .sort-btn:hover {
+            background: #ffd700;
+            color: #000;
+        }
+        
         .version-table {
             width: 100%;
             border-collapse: collapse;
@@ -157,6 +185,10 @@
             margin: 50px 0 20px;
             color: #888;
         }
+        
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -171,53 +203,150 @@
             <a href="index.html">← На главную</a>
         </div>
 
-        <!-- Игры -->
-        <div class="category">🎮 Игры</div>
-        
-        <table class="version-table">
-            <tr>
-                <th colspan="5">Maze Go!</th>
-            </tr>
-            <tr>
-                <td class="game-name">Maze Go!</td>
-                <td class="version">v1.0.0</td>
-                <td class="size">18 МБ</td>
-                <td class="platform">Android</td>
-                <td><a href="https://mryarost.itch.io/maze-go" class="download-btn" target="_blank">📥 Скачать</a></td>
-            </tr>
-        </table>
+        <!-- Переключатель режимов -->
+        <div class="sort-buttons">
+            <button class="sort-btn active" onclick="showNewFirst()">🆕 Новые первые</button>
+            <button class="sort-btn" onclick="showOldFirst()">📅 Старые первые</button>
+        </div>
 
-        <table class="version-table">
-            <tr>
-                <th colspan="5">Car City 3D</th>
-            </tr>
-            <tr>
-                <td class="game-name">Car City 3D</td>
-                <td class="version">v1.0.0.0A</td>
-                <td class="size">124 МБ</td>
-                <td class="platform">Яндекс Игры / ПК</td>
-                <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/1.0.0.0A/1.0.0.0A.rar" class="download-btn" target="_blank">📥 Скачать с GitHub</a></td>
-            </tr>
-        </table>
-        <table class="version-table">
-            <tr>
-                <th colspan="5">7 Ночей В Школе</th>
-            </tr>
-            <tr>
-                <td class="game-name">7 Ночей В Школе</td>
-                <td class="version">v1.0.0.0</td>
-                <td class="size">137 МБ</td>
-                <td class="platform">Windows</td>
-                <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/7NightInSchool_1_A/Itch.io_versions_11.04.26.rar" class="download-btn" target="_blank">📥 Скачать</a></td>
-            </tr>
-            <tr>
-                <td class="game-name">7 Ночей В Школе</td>
-                <td class="version">v1.0.0.0</td>
-                <td class="size">186 МБ</td>
-                <td class="platform">Android</td>
-                <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/7NightInSchool_1_A/RuStore_versions_11.04.26.apk" class="download-btn" target="_blank">📥 Скачать</a></td>
-            </tr>
-        </table>
+        <!-- Игры (НОВЫЕ СВЕРХУ) -->
+        <div id="gamesNew" class="games-section">
+            <div class="category">🎮 Игры</div>
+            
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">Key or Die?</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Key or Die?</td>
+                    <td class="version">1.0.0.0</td>
+                    <td class="size">121 МБ</td>
+                    <td class="platform">Windows</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/keyordie_1/05.07.26.rar" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+                <tr>
+                    <th colspan="5">Key or Die?</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Key or Die?</td>
+                    <td class="version">1.0.0.0</td>
+                    <td class="size">136 МБ</td>
+                    <td class="platform">Android</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/keyordie_1/05.07.26.apk" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+            </table>
+
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">7 Ночей В Школе</th>
+                </tr>
+                <tr>
+                    <td class="game-name">7 Ночей В Школе</td>
+                    <td class="version">v1.0.0.0</td>
+                    <td class="size">137 МБ</td>
+                    <td class="platform">Windows</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/7NightInSchool_1_A/Itch.io_versions_11.04.26.rar" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+                <tr>
+                    <td class="game-name">7 Ночей В Школе</td>
+                    <td class="version">v1.0.0.0</td>
+                    <td class="size">186 МБ</td>
+                    <td class="platform">Android</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/7NightInSchool_1_A/RuStore_versions_11.04.26.apk" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+            </table>
+
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">Car City 3D</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Car City 3D</td>
+                    <td class="version">v1.0.0.0A</td>
+                    <td class="size">124 МБ</td>
+                    <td class="platform">Яндекс Игры / ПК</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/1.0.0.0A/1.0.0.0A.rar" class="download-btn" target="_blank">📥 Скачать с GitHub</a></td>
+                </tr>
+            </table>
+
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">Maze Go!</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Maze Go!</td>
+                    <td class="version">v1.0.0</td>
+                    <td class="size">18 МБ</td>
+                    <td class="platform">Android</td>
+                    <td><a href="https://mryarost.itch.io/maze-go" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+            </table>
+        </div>
+
+        <!-- Игры (СТАРЫЕ СВЕРХУ) — скрыто по умолчанию -->
+        <div id="gamesOld" class="games-section hidden">
+            <div class="category">🎮 Игры</div>
+            
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">Maze Go!</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Maze Go!</td>
+                    <td class="version">v1.0.0</td>
+                    <td class="size">18 МБ</td>
+                    <td class="platform">Android</td>
+                    <td><a href="https://mryarost.itch.io/maze-go" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+            </table>
+
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">Car City 3D</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Car City 3D</td>
+                    <td class="version">v1.0.0.0A</td>
+                    <td class="size">124 МБ</td>
+                    <td class="platform">Яндекс Игры / ПК</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/1.0.0.0A/1.0.0.0A.rar" class="download-btn" target="_blank">📥 Скачать с GitHub</a></td>
+                </tr>
+            </table>
+
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">7 Ночей В Школе</th>
+                </tr>
+                <tr>
+                    <td class="game-name">7 Ночей В Школе</td>
+                    <td class="version">v1.0.0.0</td>
+                    <td class="size">137 МБ</td>
+                    <td class="platform">Windows</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/7NightInSchool_1_A/Itch.io_versions_11.04.26.rar" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+                <tr>
+                    <td class="game-name">7 Ночей В Школе</td>
+                    <td class="version">v1.0.0.0</td>
+                    <td class="size">186 МБ</td>
+                    <td class="platform">Android</td>
+                    <td><a href="https://github.com/MrYarost/StarLight_Games/releases/download/7NightInSchool_1_A/RuStore_versions_11.04.26.apk" class="download-btn" target="_blank">📥 Скачать</a></td>
+                </tr>
+            </table>
+
+            <table class="version-table">
+                <tr>
+                    <th colspan="5">Key or Die?</th>
+                </tr>
+                <tr>
+                    <td class="game-name">Key or Die? (скоро)</td>
+                    <td class="version">v1.0.0.0</td>
+                    <td class="size">~80 МБ</td>
+                    <td class="platform">Android</td>
+                    <td><span class="soon-badge">⏳ Скоро</span></td>
+                </tr>
+            </table>
+        </div>
+
         <!-- Программы -->
         <div class="category">💻 Программы</div>
         
@@ -241,23 +370,6 @@
             </tr>
         </table>
 
-        <!--
-        <div class="category">📦 Архив</div>
-        
-        <table class="version-table">
-            <tr>
-                <th colspan="5">Старые версии</th>
-            </tr>
-            <tr>
-                <td class="game-name">Maze Go! (бета)</td>
-                <td class="version">v0.9</td>
-                <td class="size">15 МБ</td>
-                <td class="platform">Android</td>
-                <td><a href="https://mryarost.itch.io/maze-go" class="download-btn" target="_blank">📥 Скачать</a></td>
-            </tr>
-        </table>
-        -->
-
         <div class="note">
             скоро будут добавляться новые версии! 😊
         </div>
@@ -266,5 +378,21 @@
             <p>© 2026 StarLight</p>
         </div>
     </div>
+
+    <script>
+        function showNewFirst() {
+            document.getElementById('gamesNew').classList.remove('hidden');
+            document.getElementById('gamesOld').classList.add('hidden');
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+        
+        function showOldFirst() {
+            document.getElementById('gamesNew').classList.add('hidden');
+            document.getElementById('gamesOld').classList.remove('hidden');
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+    </script>
 </body>
 </html>
