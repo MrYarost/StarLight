@@ -37,16 +37,35 @@
             gap: 12px;
         }
 
-        .header h1 {
-            font-size: 28px;
-            background: linear-gradient(90deg, #6c5ce7, #00b4d8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .header .subtitle {
-            color: #888;
+        .header-left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 18px;
             font-size: 14px;
+            color: #aaa;
+        }
+
+        .header-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .header-links a:hover {
+            color: #ffffff;
         }
 
         .header .sync-status {
@@ -404,8 +423,24 @@
                 justify-content: flex-start;
             }
 
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .header-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
             .header h1 {
-                font-size: 20px;
+                font-size: 18px;
             }
 
             .tabs button {
@@ -415,11 +450,6 @@
 
             .panel {
                 padding: 16px;
-            }
-
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
             }
 
             .header .sync-status {
@@ -432,8 +462,14 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>Vortex-Strike</h1>
-            <span class="subtitle">Сообщество</span>
+            <div class="header-left">
+                <h1>Vortex-Strike: Community</h1>
+                <div class="header-links">
+                    <a href="https://github.com/MrYarost/StarLight/vortex_rules.html target="_blank">Правила</a>
+                    <a href="https://github.com/MrYarost/StarLight" target="_blank">Скачать</a>
+                    <a href="https://github.com/MrYarost/StarLight/vortex.html" target="_blank">Сообщество</a>
+                </div>
+            </div>
             <div class="sync-status" id="syncStatus">
                 <span class="dot" id="syncDot"></span>
                 <span id="syncText">Загрузка...</span>
