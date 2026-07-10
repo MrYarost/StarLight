@@ -177,16 +177,6 @@
             transform: scale(1.02);
         }
 
-        .btn-danger {
-            background: #e74c3c;
-            color: #fff;
-        }
-
-        .btn-danger:hover {
-            background: #ff6b5a;
-            transform: scale(1.02);
-        }
-
         .btn-outline {
             background: transparent;
             color: #888;
@@ -467,6 +457,10 @@
                     📤 Загрузить проект
                 </button>
                 <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(event)">
+                <div style="display: flex; gap: 6px; margin-left: auto;">
+                    <button class="btn btn-sm btn-outline active" id="mapsNewTab" onclick="switchMapsTab('new')">🆕 Новое</button>
+                    <button class="btn btn-sm btn-outline" id="mapsPopularTab" onclick="switchMapsTab('popular')">⭐ Популярное</button>
+                </div>
             </div>
 
             <div id="mapsList" class="list"></div>
@@ -535,7 +529,6 @@
         const SUPABASE_URL = 'https://pjzbvqenxzodgeqzibkj.supabase.co';
         const SUPABASE_ANON_KEY = 'sb_publishable_UQ3orDY6jIeRv48FtpZDiA_yOiSaUIK';
 
-        // Инициализация клиента
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
@@ -543,6 +536,7 @@
         // ============================================================
         let maps = [];
         let servers = [];
+        let mapsSortMode = 'new';
         let serverSortMode = 'new';
         let isLoading = false;
 
@@ -576,7 +570,7 @@
         }
 
         // ============================================================
-        // 4. ЗАГРУЗКА ДАННЫХ ИЗ БАЗЫ
+        // 4. ЗАГРУЗКА ДАННЫХ
         // ============================================================
         async function loadFromSupabase() {
             if (isLoading) return;
@@ -603,7 +597,6 @@
                 renderMaps();
                 renderServers();
                 setSyncStatus('Синхронизировано', 'success');
-                showToast('✅ Данные загружены из базы', 'success');
             } catch (e) {
                 console.error('Ошибка загрузки:', e);
                 setSyncStatus('Ошибка загрузки', 'error');
@@ -639,7 +632,8 @@
                             map_description: data.mapDescription || '',
                             map_version: data.mapVersion || '1.0.0',
                             map_game_mode: data.mapGameMode || 'Не указан',
-                            minutes_game: data.minutesGame || 5
+                            minutes_game: data.minutesGame || 5,
+                            likes: 0
                         }]);
 
                     if (error) throw error;
@@ -658,7 +652,14 @@
             const container = document.getElementById('mapsList');
             const count = document.getElementById('mapsCount');
 
-            if (maps.length === 0) {
+            let sorted = [...maps];
+            if (mapsSortMode === 'popular') {
+                sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
+            } else {
+                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+            }
+
+            if (sorted.length === 0) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="icon">📭</div>
@@ -670,27 +671,66 @@
                 return;
             }
 
-            count.textContent = maps.length + ' карт';
-            container.innerHTML = maps.map((map) => `
-                <div class="list-item">
-                    <div class="info">
-                        <div class="title">${map.map_name}</div>
-                        <div class="details">
-                            <span>👤 ${map.map_author || 'Неизвестно'}</span>
-                            <span>🎮 ${map.map_game_mode || 'Не указан'}</span>
-                            <span>📦 ${map.map_version || '1.0'}</span>
-                            <span>⏱ ${map.minutes_game || 5} мин</span>
+            count.textContent = sorted.length + ' карт';
+
+            container.innerHTML = sorted.map((map) => {
+                const likedKey = 'liked_map_' + map.id;
+                const alreadyLiked = localStorage.getItem(likedKey) === 'true';
+
+                return `
+                    <div class="list-item">
+                        <div class="info">
+                            <div class="title">${map.map_name}</div>
+                            <div class="details">
+                                <span>👤 ${map.map_author || 'Неизвестно'}</span>
+                                <span>🎮 ${map.map_game_mode || 'Не указан'}</span>
+                                <span>📦 ${map.map_version || '1.0'}</span>
+                                <span>⏱ ${map.minutes_game || 5} мин</span>
+                                <span>⭐ ${map.likes || 0}</span>
+                            </div>
+                            <div style="font-size: 13px; color: #666; margin-top: 4px;">
+                                ${map.map_description || 'Без описания'}
+                            </div>
                         </div>
-                        <div style="font-size: 13px; color: #666; margin-top: 4px;">
-                            ${map.map_description || 'Без описания'}
+                        <div class="actions">
+                            <button class="btn btn-sm btn-outline" 
+                                    onclick="likeMap(${map.id})" 
+                                    ${alreadyLiked ? 'disabled' : ''}>
+                                ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
+                            </button>
+                            <button class="btn btn-sm btn-primary" onclick="downloadMap(${map.id})">📥 Скачать</button>
+                            <button class="btn btn-sm btn-outline" onclick="copyMap(${map.id})">📋 Копировать</button>
                         </div>
                     </div>
-                    <div class="actions">
-                        <button class="btn btn-sm btn-primary" onclick="downloadMap(${map.id})">📥 Скачать</button>
-                        <button class="btn btn-sm btn-outline" onclick="copyMap(${map.id})">📋 Копировать</button>
-                    </div>
-                </div>
-            `).join('');
+                `;
+            }).join('');
+        }
+
+        async function likeMap(id) {
+            const likedKey = 'liked_map_' + id;
+            if (localStorage.getItem(likedKey) === 'true') {
+                showToast('❌ Вы уже лайкнули эту карту!', 'error');
+                return;
+            }
+
+            try {
+                const map = maps.find(m => m.id === id);
+                if (!map) return;
+
+                const { error } = await supabaseClient
+                    .from('maps')
+                    .update({ likes: (map.likes || 0) + 1 })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                localStorage.setItem(likedKey, 'true');
+                await loadFromSupabase();
+                showToast('❤️ Лайк поставлен!', 'success');
+            } catch (e) {
+                showToast('❌ Ошибка: ' + e.message, 'error');
+                console.error(e);
+            }
         }
 
         function downloadMap(id) {
@@ -735,6 +775,13 @@
                 textarea.remove();
                 showToast('✅ JSON скопирован!', 'success');
             });
+        }
+
+        function switchMapsTab(mode) {
+            mapsSortMode = mode;
+            document.getElementById('mapsNewTab').classList.toggle('active', mode === 'new');
+            document.getElementById('mapsPopularTab').classList.toggle('active', mode === 'popular');
+            renderMaps();
         }
 
         // ============================================================
@@ -786,9 +833,9 @@
                             </div>
                         </div>
                         <div class="actions">
-                        <button class="btn btn-sm btn-outline" 
-                                onclick="likeServer(${server.id})" 
-                                ${alreadyLiked ? 'disabled' : ''}>
+                            <button class="btn btn-sm btn-outline" 
+                                    onclick="likeServer(${server.id})" 
+                                    ${alreadyLiked ? 'disabled' : ''}>
                                 ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
                             </button>
                         </div>
@@ -820,6 +867,7 @@
                 showToast('❤️ Лайк поставлен!', 'success');
             } catch (e) {
                 showToast('❌ Ошибка: ' + e.message, 'error');
+                console.error(e);
             }
         }
 
