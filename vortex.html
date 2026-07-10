@@ -467,7 +467,6 @@
                     📤 Загрузить проект
                 </button>
                 <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(event)">
-                <button class="btn btn-danger btn-sm" onclick="clearAllData()" style="margin-left:auto;">🗑️ Очистить всё</button>
             </div>
 
             <div id="mapsList" class="list"></div>
@@ -537,7 +536,7 @@
         const SUPABASE_ANON_KEY = 'sb_publishable_UQ3orDY6jIeRv48FtpZDiA_yOiSaUIK';
 
         // Инициализация клиента
-        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
         // 2. ДАННЫЕ
@@ -585,7 +584,7 @@
             setSyncStatus('Загрузка...', 'loading');
 
             try {
-                const { data: mapsData, error: mapsError } = await supabase
+                const { data: mapsData, error: mapsError } = await supabaseClient
                     .from('maps')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -593,7 +592,7 @@
                 if (mapsError) throw mapsError;
                 maps = mapsData || [];
 
-                const { data: serversData, error: serversError } = await supabase
+                const { data: serversData, error: serversError } = await supabaseClient
                     .from('servers')
                     .select('*')
                     .order('created_at', { ascending: false });
@@ -632,7 +631,7 @@
                         return;
                     }
 
-                    const { error } = await supabase
+                    const { error } = await supabaseClient
                         .from('maps')
                         .insert([{
                             map_name: data.mapName,
@@ -689,7 +688,6 @@
                     <div class="actions">
                         <button class="btn btn-sm btn-primary" onclick="downloadMap(${map.id})">📥 Скачать</button>
                         <button class="btn btn-sm btn-outline" onclick="copyMap(${map.id})">📋 Копировать</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteMap(${map.id})">🗑️</button>
                     </div>
                 </div>
             `).join('');
@@ -737,18 +735,6 @@
                 textarea.remove();
                 showToast('✅ JSON скопирован!', 'success');
             });
-        }
-
-        async function deleteMap(id) {
-            if (!confirm('Удалить эту карту?')) return;
-            try {
-                const { error } = await supabase.from('maps').delete().eq('id', id);
-                if (error) throw error;
-                await loadFromSupabase();
-                showToast('🗑️ Карта удалена', 'success');
-            } catch (e) {
-                showToast('❌ Ошибка удаления: ' + e.message, 'error');
-            }
         }
 
         // ============================================================
@@ -805,7 +791,6 @@
                                     ${alreadyLiked ? 'disabled' : ''}>
                                 ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteServer('${server.id}')">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -823,7 +808,7 @@
                 const server = servers.find(s => s.id === id);
                 if (!server) return;
 
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('servers')
                     .update({ likes: server.likes + 1 })
                     .eq('id', id);
@@ -835,18 +820,6 @@
                 showToast('❤️ Лайк поставлен!', 'success');
             } catch (e) {
                 showToast('❌ Ошибка: ' + e.message, 'error');
-            }
-        }
-
-        async function deleteServer(id) {
-            if (!confirm('Удалить этот сервер?')) return;
-            try {
-                const { error } = await supabase.from('servers').delete().eq('id', id);
-                if (error) throw error;
-                await loadFromSupabase();
-                showToast('🗑️ Сервер удалён', 'success');
-            } catch (e) {
-                showToast('❌ Ошибка удаления: ' + e.message, 'error');
             }
         }
 
@@ -891,7 +864,7 @@
             }
 
             try {
-                const { error } = await supabase
+                const { error } = await supabaseClient
                     .from('servers')
                     .insert([{
                         server_name: name,
@@ -913,23 +886,7 @@
         }
 
         // ============================================================
-        // 8. ОЧИСТКА ВСЕХ ДАННЫХ
-        // ============================================================
-        async function clearAllData() {
-            if (!confirm('⚠️ Удалить ВСЕ карты и сервера?')) return;
-            try {
-                const { error: mapsError } = await supabase.from('maps').delete().neq('id', 0);
-                const { error: serversError } = await supabase.from('servers').delete().neq('id', 0);
-                if (mapsError || serversError) throw mapsError || serversError;
-                await loadFromSupabase();
-                showToast('🗑️ Все данные очищены', 'success');
-            } catch (e) {
-                showToast('❌ Ошибка очистки: ' + e.message, 'error');
-            }
-        }
-
-        // ============================================================
-        // 9. ВКЛАДКИ
+        // 8. ВКЛАДКИ
         // ============================================================
         function switchTab(tab) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
@@ -946,7 +903,7 @@
         }
 
         // ============================================================
-        // 10. ЗАПУСК
+        // 9. ЗАПУСК
         // ============================================================
         document.getElementById('addServerModal').addEventListener('click', function(e) {
             if (e.target === this) closeAddServer();
