@@ -585,7 +585,6 @@
             setSyncStatus('Загрузка...', 'loading');
 
             try {
-                // Загружаем карты
                 const { data: mapsData, error: mapsError } = await supabase
                     .from('maps')
                     .select('*')
@@ -594,7 +593,6 @@
                 if (mapsError) throw mapsError;
                 maps = mapsData || [];
 
-                // Загружаем сервера
                 const { data: serversData, error: serversError } = await supabase
                     .from('servers')
                     .select('*')
