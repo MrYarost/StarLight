@@ -741,6 +741,7 @@
         // 6. СЕРВЕРА
         // ============================================================
         function renderServers() {
+            console.log(servers);
             const container = document.getElementById('serversList');
             const count = document.getElementById('serversCount');
 
@@ -786,9 +787,9 @@
                             </div>
                         </div>
                         <div class="actions">
-                            <button class="btn btn-sm btn-outline" 
-                                    onclick="likeServer('${server.id}')" 
-                                    ${alreadyLiked ? 'disabled' : ''}>
+                        <button class="btn btn-sm btn-outline" 
+                                onclick="likeServer(${server.id})" 
+                                ${alreadyLiked ? 'disabled' : ''}>
                                 ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
                             </button>
                         </div>
