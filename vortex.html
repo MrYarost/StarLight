@@ -33,6 +33,8 @@
             border-radius: 12px;
             margin-bottom: 24px;
             border: 1px solid #2a2a2a;
+            flex-wrap: wrap;
+            gap: 12px;
         }
 
         .header h1 {
@@ -427,7 +429,6 @@
 
             .header {
                 flex-direction: column;
-                gap: 12px;
                 align-items: flex-start;
             }
 
@@ -527,17 +528,16 @@
     <!-- TOAST -->
     <div id="toast" class="toast"></div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // ============================================================
-        // 1. НАСТРОЙКИ GITHUB
+        // 1. НАСТРОЙКИ SUPABASE
         // ============================================================
-        // ⚠️ Замени эти значения на свои!
-        const GITHUB_TOKEN = CONFIG.GITHUB_TOKEN;
-        const REPO_OWNER = 'mryarost';                  // Твой GitHub username
-        const REPO_NAME = 'StarLight';                  // Название репозитория
-        const FILE_PATH = 'data.json';                  // Файл с данными
+        const SUPABASE_URL = 'https://pjzbvqenxzodqeqzibkj.supabase.co';
+        const SUPABASE_ANON_KEY = 'sb_publishable_UQ3orDY6jIeRv48FtpZDiA_yOiSaUIK';
 
-        const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+        // Инициализация клиента
+        const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // ============================================================
         // 2. ДАННЫЕ
@@ -548,7 +548,7 @@
         let isLoading = false;
 
         // ============================================================
-        // 3. РАБОТА С GITHUB
+        // 3. UI ПОМОЩНИКИ
         // ============================================================
         function setSyncStatus(text, type = 'loading') {
             const dot = document.getElementById('syncDot');
@@ -556,13 +556,13 @@
             dot.className = 'dot';
             if (type === 'loading') {
                 dot.classList.add('syncing');
-                textEl.textContent = text || 'Синхронизация...';
+                textEl.textContent = text || 'Загрузка...';
             } else if (type === 'success') {
                 dot.style.background = '#00b894';
                 textEl.textContent = text || 'Синхронизировано';
             } else if (type === 'error') {
                 dot.style.background = '#e74c3c';
-                textEl.textContent = text || 'Ошибка синхронизации';
+                textEl.textContent = text || 'Ошибка';
             }
         }
 
@@ -576,53 +576,41 @@
             }, 3000);
         }
 
-        // Загрузка из GitHub
-        async function loadFromGitHub() {
+        // ============================================================
+        // 4. ЗАГРУЗКА ДАННЫХ ИЗ БАЗЫ
+        // ============================================================
+        async function loadFromSupabase() {
             if (isLoading) return;
             isLoading = true;
             setSyncStatus('Загрузка...', 'loading');
 
             try {
-                const res = await fetch(API_URL, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
+                // Загружаем карты
+                const { data: mapsData, error: mapsError } = await supabase
+                    .from('maps')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-                if (!res.ok) {
-                    // Если файла нет — создаём новый
-                    if (res.status === 404) {
-                        await createEmptyDataFile();
-                        return;
-                    }
-                    throw new Error(`HTTP ${res.status}`);
-                }
+                if (mapsError) throw mapsError;
+                maps = mapsData || [];
 
-                const data = await res.json();
-                const content = atob(data.content);
-                const json = JSON.parse(content);
+                // Загружаем сервера
+                const { data: serversData, error: serversError } = await supabase
+                    .from('servers')
+                    .select('*')
+                    .order('created_at', { ascending: false });
 
-                maps = json.maps || [];
-                servers = json.servers || [];
-
-                // Приводим сервера к единому формату (если старые без likes)
-                servers = servers.map(s => ({
-                    ...s,
-                    likes: s.likes || 0,
-                    currentPlayers: s.currentPlayers || 0,
-                    createdAt: s.createdAt || new Date().toISOString().replace('T', ' ').slice(0, 19)
-                }));
+                if (serversError) throw serversError;
+                servers = serversData || [];
 
                 renderMaps();
                 renderServers();
                 setSyncStatus('Синхронизировано', 'success');
-                showToast('✅ Данные загружены из GitHub', 'success');
+                showToast('✅ Данные загружены из базы', 'success');
             } catch (e) {
                 console.error('Ошибка загрузки:', e);
                 setSyncStatus('Ошибка загрузки', 'error');
                 showToast('❌ Ошибка загрузки данных', 'error');
-                // Показываем пустые списки
                 renderMaps();
                 renderServers();
             }
@@ -630,107 +618,39 @@
             isLoading = false;
         }
 
-        // Создание пустого файла если его нет
-        async function createEmptyDataFile() {
-            try {
-                const emptyData = { maps: [], servers: [] };
-                const content = btoa(JSON.stringify(emptyData, null, 2));
-
-                await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Создан файл данных сообщества',
-                        content: content
-                    })
-                });
-
-                maps = [];
-                servers = [];
-                renderMaps();
-                renderServers();
-                setSyncStatus('Синхронизировано', 'success');
-                showToast('✅ Создан новый файл данных', 'success');
-            } catch (e) {
-                console.error('Ошибка создания файла:', e);
-                setSyncStatus('Ошибка', 'error');
-                showToast('❌ Не удалось создать файл данных', 'error');
-            }
-        }
-
-        // Сохранение в GitHub
-        async function saveToGitHub() {
-            if (isLoading) return;
-            isLoading = true;
-            setSyncStatus('Сохранение...', 'loading');
-
-            try {
-                // Сначала получаем SHA файла
-                const res = await fetch(API_URL, {
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Accept': 'application/vnd.github.v3+json'
-                    }
-                });
-
-                if (!res.ok) {
-                    throw new Error(`HTTP ${res.status}`);
-                }
-
-                const data = await res.json();
-                const sha = data.sha;
-
-                const jsonData = { maps, servers };
-                const content = btoa(JSON.stringify(jsonData, null, 2));
-
-                await fetch(API_URL, {
-                    method: 'PUT',
-                    headers: {
-                        'Authorization': `token ${GITHUB_TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        message: 'Обновление данных сообщества',
-                        content: content,
-                        sha: sha
-                    })
-                });
-
-                setSyncStatus('Синхронизировано', 'success');
-                showToast('✅ Данные сохранены в GitHub', 'success');
-            } catch (e) {
-                console.error('Ошибка сохранения:', e);
-                setSyncStatus('Ошибка сохранения', 'error');
-                showToast('❌ Ошибка сохранения данных', 'error');
-            }
-
-            isLoading = false;
-        }
-
         // ============================================================
-        // 4. КАРТЫ
+        // 5. КАРТЫ
         // ============================================================
-        function loadProject(event) {
+        async function loadProject(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = async function(e) {
                 try {
                     const data = JSON.parse(e.target.result);
-                    if (data.mapName) {
-                        maps.push(data);
-                        saveToGitHub();
-                        renderMaps();
-                        showToast('✅ Карта "' + data.mapName + '" загружена!', 'success');
-                    } else {
+                    if (!data.mapName) {
                         showToast('❌ Неверный формат JSON!', 'error');
+                        return;
                     }
+
+                    const { error } = await supabase
+                        .from('maps')
+                        .insert([{
+                            map_name: data.mapName,
+                            map_author: data.mapAuthor || 'Неизвестно',
+                            map_description: data.mapDescription || '',
+                            map_version: data.mapVersion || '1.0.0',
+                            map_game_mode: data.mapGameMode || 'Не указан',
+                            minutes_game: data.minutesGame || 5
+                        }]);
+
+                    if (error) throw error;
+
+                    await loadFromSupabase();
+                    showToast('✅ Карта "' + data.mapName + '" загружена!', 'success');
                 } catch (err) {
-                    showToast('❌ Ошибка чтения файла: ' + err.message, 'error');
+                    showToast('❌ Ошибка: ' + err.message, 'error');
                 }
             };
             reader.readAsText(file);
@@ -754,45 +674,62 @@
             }
 
             count.textContent = maps.length + ' карт';
-            container.innerHTML = maps.map((map, index) => `
+            container.innerHTML = maps.map((map) => `
                 <div class="list-item">
                     <div class="info">
-                        <div class="title">${map.mapName}</div>
+                        <div class="title">${map.map_name}</div>
                         <div class="details">
-                            <span>👤 ${map.mapAuthor || 'Неизвестно'}</span>
-                            <span>🎮 ${map.mapGameMode || 'Не указан'}</span>
-                            <span>📦 ${map.mapVersion || '1.0'}</span>
-                            <span>⏱ ${map.minutesGame || 5} мин</span>
+                            <span>👤 ${map.map_author || 'Неизвестно'}</span>
+                            <span>🎮 ${map.map_game_mode || 'Не указан'}</span>
+                            <span>📦 ${map.map_version || '1.0'}</span>
+                            <span>⏱ ${map.minutes_game || 5} мин</span>
                         </div>
                         <div style="font-size: 13px; color: #666; margin-top: 4px;">
-                            ${map.mapDescription || 'Без описания'}
+                            ${map.map_description || 'Без описания'}
                         </div>
                     </div>
                     <div class="actions">
-                        <button class="btn btn-sm btn-primary" onclick="downloadMap(${index})">📥 Скачать</button>
-                        <button class="btn btn-sm btn-outline" onclick="copyMap(${index})">📋 Копировать</button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteMap(${index})">🗑️</button>
+                        <button class="btn btn-sm btn-primary" onclick="downloadMap(${map.id})">📥 Скачать</button>
+                        <button class="btn btn-sm btn-outline" onclick="copyMap(${map.id})">📋 Копировать</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMap(${map.id})">🗑️</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function downloadMap(index) {
-            const data = maps[index];
-            const json = JSON.stringify(data, null, 2);
+        function downloadMap(id) {
+            const map = maps.find(m => m.id === id);
+            if (!map) return;
+            const json = JSON.stringify({
+                mapName: map.map_name,
+                mapAuthor: map.map_author,
+                mapDescription: map.map_description,
+                mapVersion: map.map_version,
+                mapGameMode: map.map_game_mode,
+                minutesGame: map.minutes_game
+            }, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = data.mapName + '.json';
+            a.download = map.map_name + '.json';
             a.click();
             URL.revokeObjectURL(url);
         }
 
-        function copyMap(index) {
-            const json = JSON.stringify(maps[index], null, 2);
+        function copyMap(id) {
+            const map = maps.find(m => m.id === id);
+            if (!map) return;
+            const json = JSON.stringify({
+                mapName: map.map_name,
+                mapAuthor: map.map_author,
+                mapDescription: map.map_description,
+                mapVersion: map.map_version,
+                mapGameMode: map.map_game_mode,
+                minutesGame: map.minutes_game
+            }, null, 2);
             navigator.clipboard.writeText(json).then(() => {
-                showToast('✅ JSON скопирован в буфер обмена!', 'success');
+                showToast('✅ JSON скопирован!', 'success');
             }).catch(() => {
                 const textarea = document.createElement('textarea');
                 textarea.value = json;
@@ -800,21 +737,24 @@
                 textarea.select();
                 document.execCommand('copy');
                 textarea.remove();
-                showToast('✅ JSON скопирован в буфер обмена!', 'success');
+                showToast('✅ JSON скопирован!', 'success');
             });
         }
 
-        function deleteMap(index) {
-            if (confirm('Удалить карту "' + maps[index].mapName + '"?')) {
-                maps.splice(index, 1);
-                saveToGitHub();
-                renderMaps();
+        async function deleteMap(id) {
+            if (!confirm('Удалить эту карту?')) return;
+            try {
+                const { error } = await supabase.from('maps').delete().eq('id', id);
+                if (error) throw error;
+                await loadFromSupabase();
                 showToast('🗑️ Карта удалена', 'success');
+            } catch (e) {
+                showToast('❌ Ошибка удаления: ' + e.message, 'error');
             }
         }
 
         // ============================================================
-        // 5. СЕРВЕРА
+        // 6. СЕРВЕРА
         // ============================================================
         function renderServers() {
             const container = document.getElementById('serversList');
@@ -824,7 +764,7 @@
             if (serverSortMode === 'popular') {
                 sorted.sort((a, b) => b.likes - a.likes);
             } else {
-                sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
             }
 
             if (sorted.length === 0) {
@@ -842,16 +782,16 @@
             count.textContent = sorted.length + ' серверов';
 
             container.innerHTML = sorted.map((server) => {
-                const likedKey = 'liked_' + server.serverName;
+                const likedKey = 'liked_' + server.id;
                 const alreadyLiked = localStorage.getItem(likedKey) === 'true';
 
                 return `
                     <div class="list-item">
                         <div class="info">
-                            <div class="title">${server.serverName}</div>
+                            <div class="title">${server.server_name}</div>
                             <div class="details">
-                                <span>🗺️ ${server.mapName}</span>
-                                <span>👥 ${server.currentPlayers}/${server.maxPlayers}</span>
+                                <span>🗺️ ${server.map_name}</span>
+                                <span>👥 ${server.current_players}/${server.max_players}</span>
                                 <span>⭐ ${server.likes}</span>
                             </div>
                             <div class="details" style="margin-top: 4px;">
@@ -863,41 +803,52 @@
                         </div>
                         <div class="actions">
                             <button class="btn btn-sm btn-outline" 
-                                    onclick="likeServer('${server.serverName}')" 
+                                    onclick="likeServer('${server.id}')" 
                                     ${alreadyLiked ? 'disabled' : ''}>
                                 ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
                             </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteServer('${server.serverName}')">🗑️</button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteServer('${server.id}')">🗑️</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        function likeServer(name) {
-            const likedKey = 'liked_' + name;
-
+        async function likeServer(id) {
+            const likedKey = 'liked_' + id;
             if (localStorage.getItem(likedKey) === 'true') {
                 showToast('❌ Вы уже лайкнули этот сервер!', 'error');
                 return;
             }
 
-            const server = servers.find(s => s.serverName === name);
-            if (!server) return;
+            try {
+                const server = servers.find(s => s.id === id);
+                if (!server) return;
 
-            server.likes++;
-            localStorage.setItem(likedKey, 'true');
-            saveToGitHub();
-            renderServers();
-            showToast('❤️ Лайк поставлен!', 'success');
+                const { error } = await supabase
+                    .from('servers')
+                    .update({ likes: server.likes + 1 })
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                localStorage.setItem(likedKey, 'true');
+                await loadFromSupabase();
+                showToast('❤️ Лайк поставлен!', 'success');
+            } catch (e) {
+                showToast('❌ Ошибка: ' + e.message, 'error');
+            }
         }
 
-        function deleteServer(name) {
-            if (confirm('Удалить сервер "' + name + '"?')) {
-                servers = servers.filter(s => s.serverName !== name);
-                saveToGitHub();
-                renderServers();
+        async function deleteServer(id) {
+            if (!confirm('Удалить этот сервер?')) return;
+            try {
+                const { error } = await supabase.from('servers').delete().eq('id', id);
+                if (error) throw error;
+                await loadFromSupabase();
                 showToast('🗑️ Сервер удалён', 'success');
+            } catch (e) {
+                showToast('❌ Ошибка удаления: ' + e.message, 'error');
             }
         }
 
@@ -916,7 +867,7 @@
         }
 
         // ============================================================
-        // 6. ДОБАВЛЕНИЕ СЕРВЕРА
+        // 7. ДОБАВЛЕНИЕ СЕРВЕРА
         // ============================================================
         function openAddServer() {
             document.getElementById('addServerModal').classList.add('active');
@@ -930,7 +881,7 @@
             document.getElementById('addServerModal').classList.remove('active');
         }
 
-        function addServer() {
+        async function addServer() {
             const name = document.getElementById('serverNameInput').value.trim();
             const ip = document.getElementById('serverIpInput').value.trim();
             const map = document.getElementById('serverMapInput').value.trim();
@@ -941,44 +892,50 @@
                 return;
             }
 
-            const newServer = {
-                serverName: name,
-                ip: ip,
-                mapName: map,
-                maxPlayers: maxPlayers,
-                currentPlayers: 0,
-                likes: 0,
-                createdAt: new Date().toISOString().replace('T', ' ').slice(0, 19)
-            };
+            try {
+                const { error } = await supabase
+                    .from('servers')
+                    .insert([{
+                        server_name: name,
+                        ip: ip,
+                        map_name: map,
+                        max_players: maxPlayers,
+                        current_players: 0,
+                        likes: 0
+                    }]);
 
-            servers.push(newServer);
-            saveToGitHub();
-            renderServers();
-            closeAddServer();
-            showToast('✅ Сервер "' + name + '" опубликован!', 'success');
-        }
+                if (error) throw error;
 
-        // ============================================================
-        // 7. ОЧИСТКА ВСЕХ ДАННЫХ
-        // ============================================================
-        function clearAllData() {
-            if (confirm('⚠️ Удалить ВСЕ карты и сервера?')) {
-                maps = [];
-                servers = [];
-                saveToGitHub();
-                renderMaps();
-                renderServers();
-                showToast('🗑️ Все данные очищены', 'success');
+                await loadFromSupabase();
+                closeAddServer();
+                showToast('✅ Сервер "' + name + '" опубликован!', 'success');
+            } catch (e) {
+                showToast('❌ Ошибка: ' + e.message, 'error');
             }
         }
 
         // ============================================================
-        // 8. ВКЛАДКИ
+        // 8. ОЧИСТКА ВСЕХ ДАННЫХ
+        // ============================================================
+        async function clearAllData() {
+            if (!confirm('⚠️ Удалить ВСЕ карты и сервера?')) return;
+            try {
+                const { error: mapsError } = await supabase.from('maps').delete().neq('id', 0);
+                const { error: serversError } = await supabase.from('servers').delete().neq('id', 0);
+                if (mapsError || serversError) throw mapsError || serversError;
+                await loadFromSupabase();
+                showToast('🗑️ Все данные очищены', 'success');
+            } catch (e) {
+                showToast('❌ Ошибка очистки: ' + e.message, 'error');
+            }
+        }
+
+        // ============================================================
+        // 9. ВКЛАДКИ
         // ============================================================
         function switchTab(tab) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             document.querySelector(`.tabs button[data-tab="${tab}"]`).classList.add('active');
-
             document.getElementById('mapsPanel').classList.toggle('active', tab === 'maps');
             document.getElementById('serversPanel').classList.toggle('active', tab === 'servers');
         }
@@ -991,21 +948,13 @@
         }
 
         // ============================================================
-        // 9. ИНИЦИАЛИЗАЦИЯ
+        // 10. ЗАПУСК
         // ============================================================
         document.getElementById('addServerModal').addEventListener('click', function(e) {
             if (e.target === this) closeAddServer();
         });
 
-        // Загружаем данные при старте
-        loadFromGitHub();
-
-        // Обновляем статус каждые 30 секунд (проверка изменений)
-        setInterval(() => {
-            if (!isLoading) {
-                loadFromGitHub();
-            }
-        }, 30000);
+        loadFromSupabase();
     </script>
 </body>
 </html>
