@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vortex-Strike — Сообщество</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0d0d0d;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            background: linear-gradient(90deg, #6c5ce7, #00b4d8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            color: #888;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 24px;
+        }
+
+        .tabs button {
+            flex: 1;
+            padding: 14px 20px;
+            background: #1a1a1a;
+            border: 1px solid #2a2a2a;
+            color: #888;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tabs button:hover {
+            background: #252525;
+            color: #ccc;
+        }
+
+        .tabs button.active {
+            background: #2a2a2a;
+            color: #fff;
+            border-color: #6c5ce7;
+            box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
+        }
+
+        .panel {
+            display: none;
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .panel-header h2 {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        .panel-header .badge {
+            background: #2a2a2a;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            color: #888;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #6c5ce7;
+            color: #fff;
+        }
+
+        .btn-primary:hover {
+            background: #7c6cf7;
+            transform: scale(1.02);
+        }
+
+        .btn-success {
+            background: #00b894;
+            color: #fff;
+        }
+
+        .btn-success:hover {
+            background: #00d2a0;
+            transform: scale(1.02);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: #888;
+            border: 1px solid #2a2a2a;
+        }
+
+        .btn-outline:hover {
+            background: #252525;
+            color: #fff;
+        }
+
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .list-item {
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            transition: border-color 0.2s;
+        }
+
+        .list-item:hover {
+            border-color: #3a3a3a;
+        }
+
+        .list-item .info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            flex: 1;
+            min-width: 180px;
+        }
+
+        .list-item .info .title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .list-item .info .details {
+            font-size: 14px;
+            color: #888;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .list-item .info .details span {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .list-item .actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: #aaa;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: #0d0d0d;
+            border: 1px solid #2a2a2a;
+            border-radius: 8px;
+            color: #fff;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #6c5ce7;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: #1a1a1a;
+            border-radius: 16px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            border: 1px solid #2a2a2a;
+        }
+
+        .modal-content h2 {
+            color: #fff;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .modal-content .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .modal-content .close-btn:hover {
+            color: #fff;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .ip-copy {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .ip-copy code {
+            background: #0d0d0d;
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #6c5ce7;
+            border: 1px solid #2a2a2a;
+            word-break: break-all;
+        }
+
+        @media (max-width: 600px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+
+            .list-item {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .list-item .actions {
+                justify-content: flex-start;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .tabs button {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Vortex-Strike</h1>
+            <span class="subtitle">Сообщество</span>
+        </div>
+
+        <div class="tabs">
+            <button class="active" data-tab="maps" onclick="switchTab('maps')">📁 Карты</button>
+            <button data-tab="servers" onclick="switchTab('servers')">🖥️ Сервера</button>
+        </div>
+
+        <!-- MAPS -->
+        <div id="mapsPanel" class="panel active">
+            <div class="panel-header">
+                <h2>📁 Карты</h2>
+                <span class="badge" id="mapsCount">0 карт</span>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                    📤 Загрузить проект
+                </button>
+                <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(event)">
+            </div>
+
+            <div id="mapsList" class="list"></div>
+        </div>
+
+        <!-- SERVERS -->
+        <div id="serversPanel" class="panel">
+            <div class="panel-header">
+                <h2>🖥️ Сервера</h2>
+                <span class="badge" id="serversCount">0 серверов</span>
+            </div>
+
+            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
+                <button class="btn btn-success" onclick="openAddServer()">➕ Добавить сервер</button>
+                <div style="display: flex; gap: 6px; margin-left: auto;">
+                    <button class="btn btn-sm btn-outline active" id="newTab" onclick="switchServerTab('new')">🆕 Новое</button>
+                    <button class="btn btn-sm btn-outline" id="popularTab" onclick="switchServerTab('popular')">⭐ Популярное</button>
+                </div>
+            </div>
+
+            <div id="serversList" class="list"></div>
+        </div>
+    </div>
+
+    <!-- MODAL ADD SERVER -->
+    <div id="addServerModal" class="modal">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeAddServer()">✕</button>
+            <h2>➕ Добавить сервер</h2>
+
+            <div class="form-group">
+                <label>Название сервера</label>
+                <input id="serverNameInput" placeholder="Мой крутой сервер">
+            </div>
+
+            <div class="form-group">
+                <label>IP сервера</label>
+                <input id="serverIpInput" placeholder="192.168.1.100:7777">
+            </div>
+
+            <div class="form-group">
+                <label>Название карты</label>
+                <input id="serverMapInput" placeholder="Классная радужная комната">
+            </div>
+
+            <div class="form-group">
+                <label>Максимум игроков</label>
+                <input id="serverMaxPlayersInput" type="number" placeholder="16" min="2" max="64">
+            </div>
+
+            <div class="modal-actions">
+                <button class="btn btn-primary" onclick="addServer()">Опубликовать</button>
+                <button class="btn btn-outline" onclick="closeAddServer()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== STORAGE =====
+        function loadData() {
+            try {
+                const raw = localStorage.getItem('vortex_community');
+                if (raw) return JSON.parse(raw);
+            } catch (e) {}
+            return { maps: [], servers: [] };
+        }
+
+        function saveData() {
+            localStorage.setItem('vortex_community', JSON.stringify({ maps, servers }));
+        }
+
+        let { maps, servers } = loadData();
+        let serverSortMode = 'new';
+
+        // ===== LOAD MAP =====
+        function loadProject(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (data.mapName) {
+                        maps.push(data);
+                        saveData();
+                        renderMaps();
+                        alert('✅ Карта "' + data.mapName + '" загружена!');
+                    } else {
+                        alert('❌ Неверный формат JSON!');
+                    }
+                } catch (err) {
+                    alert('❌ Ошибка чтения файла: ' + err.message);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // ===== RENDER MAPS =====
+        function renderMaps() {
+            const container = document.getElementById('mapsList');
+            const count = document.getElementById('mapsCount');
+
+            if (maps.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">📭</div>
+                        <p>Нет загруженных карт</p>
+                        <p style="font-size: 14px; color: #555;">Нажми «Загрузить проект» чтобы добавить карту</p>
+                    </div>
+                `;
+                count.textContent = '0 карт';
+                return;
+            }
+
+            count.textContent = maps.length + ' карт';
+            container.innerHTML = maps.map((map, index) => `
+                <div class="list-item">
+                    <div class="info">
+                        <div class="title">${map.mapName}</div>
+                        <div class="details">
+                            <span>👤 ${map.mapAuthor || 'Неизвестно'}</span>
+                            <span>🎮 ${map.mapGameMode || 'Не указан'}</span>
+                            <span>📦 ${map.mapVersion || '1.0'}</span>
+                            <span>⏱ ${map.minutesGame || 5} мин</span>
+                        </div>
+                        <div style="font-size: 13px; color: #666; margin-top: 4px;">
+                            ${map.mapDescription || 'Без описания'}
+                        </div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn btn-sm btn-primary" onclick="downloadMap(${index})">📥 Скачать</button>
+                        <button class="btn btn-sm btn-outline" onclick="copyMap(${index})">📋 Копировать</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function downloadMap(index) {
+            const data = maps[index];
+            const json = JSON.stringify(data, null, 2);
+            const blob = new Blob([json], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = data.mapName + '.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function copyMap(index) {
+            const json = JSON.stringify(maps[index], null, 2);
+            navigator.clipboard.writeText(json).then(() => {
+                alert('✅ JSON скопирован!');
+            }).catch(() => {
+                const textarea = document.createElement('textarea');
+                textarea.value = json;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                textarea.remove();
+                alert('✅ JSON скопирован!');
+            });
+        }
+
+        // ===== RENDER SERVERS =====
+        function renderServers() {
+            const container = document.getElementById('serversList');
+            const count = document.getElementById('serversCount');
+
+            let sorted = [...servers];
+            if (serverSortMode === 'popular') {
+                sorted.sort((a, b) => b.likes - a.likes);
+            } else {
+                sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            }
+
+            if (sorted.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="icon">🖥️</div>
+                        <p>Нет серверов</p>
+                        <p style="font-size: 14px; color: #555;">Нажми «Добавить сервер» чтобы опубликовать свой</p>
+                    </div>
+                `;
+                count.textContent = '0 серверов';
+                return;
+            }
+
+            count.textContent = sorted.length + ' серверов';
+
+            container.innerHTML = sorted.map((server) => {
+                const likedKey = 'liked_' + server.serverName;
+                const alreadyLiked = localStorage.getItem(likedKey) === 'true';
+
+                return `
+                    <div class="list-item">
+                        <div class="info">
+                            <div class="title">${server.serverName}</div>
+                            <div class="details">
+                                <span>🗺️ ${server.mapName}</span>
+                                <span>👥 ${server.currentPlayers}/${server.maxPlayers}</span>
+                                <span>⭐ ${server.likes}</span>
+                            </div>
+                            <div class="details" style="margin-top: 4px;">
+                                <span class="ip-copy">
+                                    🌐 <code>${server.ip}</code>
+                                    <button class="btn btn-sm btn-outline" onclick="copyIp('${server.ip}')">📋 Копировать IP</button>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="actions">
+                            <button class="btn btn-sm btn-outline" 
+                                    onclick="likeServer('${server.serverName}')" 
+                                    ${alreadyLiked ? 'disabled' : ''}>
+                                ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ===== LIKE SERVER =====
+        function likeServer(name) {
+            const likedKey = 'liked_' + name;
+
+            if (localStorage.getItem(likedKey) === 'true') {
+                alert('❌ Вы уже лайкнули этот сервер!');
+                return;
+            }
+
+            const server = servers.find(s => s.serverName === name);
+            if (!server) return;
+
+            server.likes++;
+            saveData();
+            localStorage.setItem(likedKey, 'true');
+            renderServers();
+        }
+
+        // ===== COPY IP =====
+        function copyIp(ip) {
+            navigator.clipboard.writeText(ip).then(() => {
+                alert('✅ IP скопирован: ' + ip);
+            }).catch(() => {
+                const input = document.createElement('input');
+                input.value = ip;
+                document.body.appendChild(input);
+                input.select();
+                document.execCommand('copy');
+                input.remove();
+                alert('✅ IP скопирован: ' + ip);
+            });
+        }
+
+        // ===== ADD SERVER =====
+        function openAddServer() {
+            document.getElementById('addServerModal').classList.add('active');
+            document.getElementById('serverNameInput').value = '';
+            document.getElementById('serverIpInput').value = '';
+            document.getElementById('serverMapInput').value = '';
+            document.getElementById('serverMaxPlayersInput').value = '';
+        }
+
+        function closeAddServer() {
+            document.getElementById('addServerModal').classList.remove('active');
+        }
+
+        function addServer() {
+            const name = document.getElementById('serverNameInput').value.trim();
+            const ip = document.getElementById('serverIpInput').value.trim();
+            const map = document.getElementById('serverMapInput').value.trim();
+            const maxPlayers = parseInt(document.getElementById('serverMaxPlayersInput').value);
+
+            if (!name || !ip || !map || isNaN(maxPlayers) || maxPlayers < 2) {
+                alert('❌ Заполните все поля корректно!');
+                return;
+            }
+
+            const newServer = {
+                serverName: name,
+                ip: ip,
+                mapName: map,
+                maxPlayers: maxPlayers,
+                currentPlayers: 0,
+                likes: 0,
+                createdAt: new Date().toISOString().replace('T', ' ').slice(0, 19)
+            };
+
+            servers.push(newServer);
+            saveData();
+            renderServers();
+            closeAddServer();
+            alert('✅ Сервер "' + name + '" опубликован!');
+        }
+
+        // ===== TABS =====
+        function switchTab(tab) {
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            document.querySelector(`.tabs button[data-tab="${tab}"]`).classList.add('active');
+
+            document.getElementById('mapsPanel').classList.toggle('active', tab === 'maps');
+            document.getElementById('serversPanel').classList.toggle('active', tab === 'servers');
+
+            if (tab === 'maps') renderMaps();
+            if (tab === 'servers') renderServers();
+        }
+
+        function switchServerTab(mode) {
+            serverSortMode = mode;
+            document.getElementById('newTab').classList.toggle('active', mode === 'new');
+            document.getElementById('popularTab').classList.toggle('active', mode === 'popular');
+            renderServers();
+        }
+
+        // ===== INIT =====
+        renderMaps();
+        renderServers();
+
+        document.getElementById('addServerModal').addEventListener('click', function(e) {
+            if (e.target === this) closeAddServer();
+        });
+    </script>
+</body>
+</html>
