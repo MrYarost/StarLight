@@ -47,6 +47,39 @@
             font-size: 14px;
         }
 
+        .header .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #888;
+            background: #0d0d0d;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header .sync-status .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00b894;
+        }
+
+        .header .sync-status .dot.syncing {
+            background: #fdcb6e;
+            animation: pulse 0.8s infinite;
+        }
+
+        .header .sync-status .dot.error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
         .tabs {
             display: flex;
             gap: 8px;
@@ -139,6 +172,16 @@
 
         .btn-success:hover {
             background: #00d2a0;
+            transform: scale(1.02);
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+            color: #fff;
+        }
+
+        .btn-danger:hover {
+            background: #ff6b5a;
             transform: scale(1.02);
         }
 
@@ -260,12 +303,6 @@
             border-color: #6c5ce7;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
         .modal {
             display: none;
             position: fixed;
@@ -337,11 +374,35 @@
             word-break: break-all;
         }
 
-        @media (max-width: 600px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 14px 24px;
+            border-radius: 10px;
+            color: #fff;
+            font-weight: 600;
+            z-index: 9999;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
 
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.success {
+            background: #00b894;
+        }
+
+        .toast.error {
+            background: #e74c3c;
+        }
+
+        @media (max-width: 600px) {
             .list-item {
                 flex-direction: column;
                 align-items: stretch;
@@ -363,6 +424,17 @@
             .panel {
                 padding: 16px;
             }
+
+            .header {
+                flex-direction: column;
+                gap: 12px;
+                align-items: flex-start;
+            }
+
+            .header .sync-status {
+                width: 100%;
+                justify-content: center;
+            }
         }
     </style>
 </head>
@@ -371,6 +443,10 @@
         <div class="header">
             <h1>Vortex-Strike</h1>
             <span class="subtitle">Сообщество</span>
+            <div class="sync-status" id="syncStatus">
+                <span class="dot" id="syncDot"></span>
+                <span id="syncText">Загрузка...</span>
+            </div>
         </div>
 
         <div class="tabs">
@@ -390,6 +466,7 @@
                     📤 Загрузить проект
                 </button>
                 <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(event)">
+                <button class="btn btn-danger btn-sm" onclick="clearAllData()" style="margin-left:auto;">🗑️ Очистить всё</button>
             </div>
 
             <div id="mapsList" class="list"></div>
@@ -447,24 +524,195 @@
         </div>
     </div>
 
+    <!-- TOAST -->
+    <div id="toast" class="toast"></div>
+
     <script>
-        // ===== STORAGE =====
-        function loadData() {
-            try {
-                const raw = localStorage.getItem('vortex_community');
-                if (raw) return JSON.parse(raw);
-            } catch (e) {}
-            return { maps: [], servers: [] };
-        }
+        // ============================================================
+        // 1. НАСТРОЙКИ GITHUB
+        // ============================================================
+        // ⚠️ Замени эти значения на свои!
+        const GITHUB_TOKEN = CONFIG.GITHUB_TOKEN;
+        const REPO_OWNER = 'mryarost';                  // Твой GitHub username
+        const REPO_NAME = 'StarLight';                  // Название репозитория
+        const FILE_PATH = 'data.json';                  // Файл с данными
 
-        function saveData() {
-            localStorage.setItem('vortex_community', JSON.stringify({ maps, servers }));
-        }
+        const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
 
-        let { maps, servers } = loadData();
+        // ============================================================
+        // 2. ДАННЫЕ
+        // ============================================================
+        let maps = [];
+        let servers = [];
         let serverSortMode = 'new';
+        let isLoading = false;
 
-        // ===== LOAD MAP =====
+        // ============================================================
+        // 3. РАБОТА С GITHUB
+        // ============================================================
+        function setSyncStatus(text, type = 'loading') {
+            const dot = document.getElementById('syncDot');
+            const textEl = document.getElementById('syncText');
+            dot.className = 'dot';
+            if (type === 'loading') {
+                dot.classList.add('syncing');
+                textEl.textContent = text || 'Синхронизация...';
+            } else if (type === 'success') {
+                dot.style.background = '#00b894';
+                textEl.textContent = text || 'Синхронизировано';
+            } else if (type === 'error') {
+                dot.style.background = '#e74c3c';
+                textEl.textContent = text || 'Ошибка синхронизации';
+            }
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.className = 'toast ' + type + ' show';
+            clearTimeout(toast._hideTimeout);
+            toast._hideTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Загрузка из GitHub
+        async function loadFromGitHub() {
+            if (isLoading) return;
+            isLoading = true;
+            setSyncStatus('Загрузка...', 'loading');
+
+            try {
+                const res = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!res.ok) {
+                    // Если файла нет — создаём новый
+                    if (res.status === 404) {
+                        await createEmptyDataFile();
+                        return;
+                    }
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                const content = atob(data.content);
+                const json = JSON.parse(content);
+
+                maps = json.maps || [];
+                servers = json.servers || [];
+
+                // Приводим сервера к единому формату (если старые без likes)
+                servers = servers.map(s => ({
+                    ...s,
+                    likes: s.likes || 0,
+                    currentPlayers: s.currentPlayers || 0,
+                    createdAt: s.createdAt || new Date().toISOString().replace('T', ' ').slice(0, 19)
+                }));
+
+                renderMaps();
+                renderServers();
+                setSyncStatus('Синхронизировано', 'success');
+                showToast('✅ Данные загружены из GitHub', 'success');
+            } catch (e) {
+                console.error('Ошибка загрузки:', e);
+                setSyncStatus('Ошибка загрузки', 'error');
+                showToast('❌ Ошибка загрузки данных', 'error');
+                // Показываем пустые списки
+                renderMaps();
+                renderServers();
+            }
+
+            isLoading = false;
+        }
+
+        // Создание пустого файла если его нет
+        async function createEmptyDataFile() {
+            try {
+                const emptyData = { maps: [], servers: [] };
+                const content = btoa(JSON.stringify(emptyData, null, 2));
+
+                await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Создан файл данных сообщества',
+                        content: content
+                    })
+                });
+
+                maps = [];
+                servers = [];
+                renderMaps();
+                renderServers();
+                setSyncStatus('Синхронизировано', 'success');
+                showToast('✅ Создан новый файл данных', 'success');
+            } catch (e) {
+                console.error('Ошибка создания файла:', e);
+                setSyncStatus('Ошибка', 'error');
+                showToast('❌ Не удалось создать файл данных', 'error');
+            }
+        }
+
+        // Сохранение в GitHub
+        async function saveToGitHub() {
+            if (isLoading) return;
+            isLoading = true;
+            setSyncStatus('Сохранение...', 'loading');
+
+            try {
+                // Сначала получаем SHA файла
+                const res = await fetch(API_URL, {
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Accept': 'application/vnd.github.v3+json'
+                    }
+                });
+
+                if (!res.ok) {
+                    throw new Error(`HTTP ${res.status}`);
+                }
+
+                const data = await res.json();
+                const sha = data.sha;
+
+                const jsonData = { maps, servers };
+                const content = btoa(JSON.stringify(jsonData, null, 2));
+
+                await fetch(API_URL, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${GITHUB_TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: 'Обновление данных сообщества',
+                        content: content,
+                        sha: sha
+                    })
+                });
+
+                setSyncStatus('Синхронизировано', 'success');
+                showToast('✅ Данные сохранены в GitHub', 'success');
+            } catch (e) {
+                console.error('Ошибка сохранения:', e);
+                setSyncStatus('Ошибка сохранения', 'error');
+                showToast('❌ Ошибка сохранения данных', 'error');
+            }
+
+            isLoading = false;
+        }
+
+        // ============================================================
+        // 4. КАРТЫ
+        // ============================================================
         function loadProject(event) {
             const file = event.target.files[0];
             if (!file) return;
@@ -475,21 +723,20 @@
                     const data = JSON.parse(e.target.result);
                     if (data.mapName) {
                         maps.push(data);
-                        saveData();
+                        saveToGitHub();
                         renderMaps();
-                        alert('✅ Карта "' + data.mapName + '" загружена!');
+                        showToast('✅ Карта "' + data.mapName + '" загружена!', 'success');
                     } else {
-                        alert('❌ Неверный формат JSON!');
+                        showToast('❌ Неверный формат JSON!', 'error');
                     }
                 } catch (err) {
-                    alert('❌ Ошибка чтения файла: ' + err.message);
+                    showToast('❌ Ошибка чтения файла: ' + err.message, 'error');
                 }
             };
             reader.readAsText(file);
             event.target.value = '';
         }
 
-        // ===== RENDER MAPS =====
         function renderMaps() {
             const container = document.getElementById('mapsList');
             const count = document.getElementById('mapsCount');
@@ -524,6 +771,7 @@
                     <div class="actions">
                         <button class="btn btn-sm btn-primary" onclick="downloadMap(${index})">📥 Скачать</button>
                         <button class="btn btn-sm btn-outline" onclick="copyMap(${index})">📋 Копировать</button>
+                        <button class="btn btn-sm btn-danger" onclick="deleteMap(${index})">🗑️</button>
                     </div>
                 </div>
             `).join('');
@@ -544,7 +792,7 @@
         function copyMap(index) {
             const json = JSON.stringify(maps[index], null, 2);
             navigator.clipboard.writeText(json).then(() => {
-                alert('✅ JSON скопирован!');
+                showToast('✅ JSON скопирован в буфер обмена!', 'success');
             }).catch(() => {
                 const textarea = document.createElement('textarea');
                 textarea.value = json;
@@ -552,11 +800,22 @@
                 textarea.select();
                 document.execCommand('copy');
                 textarea.remove();
-                alert('✅ JSON скопирован!');
+                showToast('✅ JSON скопирован в буфер обмена!', 'success');
             });
         }
 
-        // ===== RENDER SERVERS =====
+        function deleteMap(index) {
+            if (confirm('Удалить карту "' + maps[index].mapName + '"?')) {
+                maps.splice(index, 1);
+                saveToGitHub();
+                renderMaps();
+                showToast('🗑️ Карта удалена', 'success');
+            }
+        }
+
+        // ============================================================
+        // 5. СЕРВЕРА
+        // ============================================================
         function renderServers() {
             const container = document.getElementById('serversList');
             const count = document.getElementById('serversCount');
@@ -608,18 +867,18 @@
                                     ${alreadyLiked ? 'disabled' : ''}>
                                 ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
                             </button>
+                            <button class="btn btn-sm btn-danger" onclick="deleteServer('${server.serverName}')">🗑️</button>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // ===== LIKE SERVER =====
         function likeServer(name) {
             const likedKey = 'liked_' + name;
 
             if (localStorage.getItem(likedKey) === 'true') {
-                alert('❌ Вы уже лайкнули этот сервер!');
+                showToast('❌ Вы уже лайкнули этот сервер!', 'error');
                 return;
             }
 
@@ -627,15 +886,24 @@
             if (!server) return;
 
             server.likes++;
-            saveData();
             localStorage.setItem(likedKey, 'true');
+            saveToGitHub();
             renderServers();
+            showToast('❤️ Лайк поставлен!', 'success');
         }
 
-        // ===== COPY IP =====
+        function deleteServer(name) {
+            if (confirm('Удалить сервер "' + name + '"?')) {
+                servers = servers.filter(s => s.serverName !== name);
+                saveToGitHub();
+                renderServers();
+                showToast('🗑️ Сервер удалён', 'success');
+            }
+        }
+
         function copyIp(ip) {
             navigator.clipboard.writeText(ip).then(() => {
-                alert('✅ IP скопирован: ' + ip);
+                showToast('✅ IP скопирован: ' + ip, 'success');
             }).catch(() => {
                 const input = document.createElement('input');
                 input.value = ip;
@@ -643,11 +911,13 @@
                 input.select();
                 document.execCommand('copy');
                 input.remove();
-                alert('✅ IP скопирован: ' + ip);
+                showToast('✅ IP скопирован: ' + ip, 'success');
             });
         }
 
-        // ===== ADD SERVER =====
+        // ============================================================
+        // 6. ДОБАВЛЕНИЕ СЕРВЕРА
+        // ============================================================
         function openAddServer() {
             document.getElementById('addServerModal').classList.add('active');
             document.getElementById('serverNameInput').value = '';
@@ -667,7 +937,7 @@
             const maxPlayers = parseInt(document.getElementById('serverMaxPlayersInput').value);
 
             if (!name || !ip || !map || isNaN(maxPlayers) || maxPlayers < 2) {
-                alert('❌ Заполните все поля корректно!');
+                showToast('❌ Заполните все поля корректно!', 'error');
                 return;
             }
 
@@ -682,22 +952,35 @@
             };
 
             servers.push(newServer);
-            saveData();
+            saveToGitHub();
             renderServers();
             closeAddServer();
-            alert('✅ Сервер "' + name + '" опубликован!');
+            showToast('✅ Сервер "' + name + '" опубликован!', 'success');
         }
 
-        // ===== TABS =====
+        // ============================================================
+        // 7. ОЧИСТКА ВСЕХ ДАННЫХ
+        // ============================================================
+        function clearAllData() {
+            if (confirm('⚠️ Удалить ВСЕ карты и сервера?')) {
+                maps = [];
+                servers = [];
+                saveToGitHub();
+                renderMaps();
+                renderServers();
+                showToast('🗑️ Все данные очищены', 'success');
+            }
+        }
+
+        // ============================================================
+        // 8. ВКЛАДКИ
+        // ============================================================
         function switchTab(tab) {
             document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
             document.querySelector(`.tabs button[data-tab="${tab}"]`).classList.add('active');
 
             document.getElementById('mapsPanel').classList.toggle('active', tab === 'maps');
             document.getElementById('serversPanel').classList.toggle('active', tab === 'servers');
-
-            if (tab === 'maps') renderMaps();
-            if (tab === 'servers') renderServers();
         }
 
         function switchServerTab(mode) {
@@ -707,13 +990,22 @@
             renderServers();
         }
 
-        // ===== INIT =====
-        renderMaps();
-        renderServers();
-
+        // ============================================================
+        // 9. ИНИЦИАЛИЗАЦИЯ
+        // ============================================================
         document.getElementById('addServerModal').addEventListener('click', function(e) {
             if (e.target === this) closeAddServer();
         });
+
+        // Загружаем данные при старте
+        loadFromGitHub();
+
+        // Обновляем статус каждые 30 секунд (проверка изменений)
+        setInterval(() => {
+            if (!isLoading) {
+                loadFromGitHub();
+            }
+        }, 30000);
     </script>
 </body>
 </html>
