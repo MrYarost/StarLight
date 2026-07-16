@@ -772,14 +772,7 @@
         function downloadMap(id) {
             const map = maps.find(m => m.id === id);
             if (!map) return;
-            const json = JSON.stringify({
-                mapName: map.map_name,
-                mapAuthor: map.map_author,
-                mapDescription: map.map_description,
-                mapVersion: map.map_version,
-                mapGameMode: map.map_game_mode,
-                minutesGame: map.minutes_game
-            }, null, 2);
+            const json = JSON.stringify(map, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
