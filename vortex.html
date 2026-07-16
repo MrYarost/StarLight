@@ -539,7 +539,7 @@
 
             <div class="form-group">
                 <label>Название карты</label>
-                <input id="serverMapInput" placeholder="Классная радужная комната">
+                <input id="serverMapInput" placeholder="Bhop или Jair">
             </div>
 
             <div class="form-group">
@@ -785,14 +785,7 @@
         function copyMap(id) {
             const map = maps.find(m => m.id === id);
             if (!map) return;
-            const json = JSON.stringify({
-                mapName: map.map_name,
-                mapAuthor: map.map_author,
-                mapDescription: map.map_description,
-                mapVersion: map.map_version,
-                mapGameMode: map.map_game_mode,
-                minutesGame: map.minutes_game
-            }, null, 2);
+            const json = JSON.stringify(map, null, 2);
             navigator.clipboard.writeText(json).then(() => {
                 showToast('✅ JSON скопирован!', 'success');
             }).catch(() => {
