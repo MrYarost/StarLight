@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vortex-Strike: Правила</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background: #0d0d0d;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            background: #1a1a1a;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            border: 1px solid #2a2a2a;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header-left h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: 0.5px;
+        }
+
+        .header-links {
+            display: flex;
+            gap: 18px;
+            font-size: 14px;
+            color: #aaa;
+        }
+
+        .header-links a {
+            color: #aaa;
+            text-decoration: none;
+            transition: color 0.2s;
+            cursor: pointer;
+        }
+
+        .header-links a:hover {
+            color: #ffffff;
+        }
+
+        .header .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #888;
+            background: #0d0d0d;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid #2a2a2a;
+        }
+
+        .header .sync-status .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #00b894;
+        }
+
+        .header .sync-status .dot.syncing {
+            background: #fdcb6e;
+            animation: pulse 0.8s infinite;
+        }
+
+        .header .sync-status .dot.error {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .content {
+            background: #1a1a1a;
+            border-radius: 12px;
+            padding: 32px;
+            border: 1px solid #2a2a2a;
+            line-height: 1.7;
+            font-size: 16px;
+        }
+
+        .content h2 {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            border-bottom: 1px solid #2a2a2a;
+            padding-bottom: 12px;
+        }
+
+        .content h3 {
+            font-size: 20px;
+            margin-top: 24px;
+            margin-bottom: 10px;
+            color: #e0e0e0;
+        }
+
+        .content p {
+            margin-bottom: 12px;
+            color: #bbb;
+        }
+
+        .content ul,
+        .content ol {
+            margin-left: 24px;
+            margin-bottom: 16px;
+            color: #bbb;
+        }
+
+        .content li {
+            margin-bottom: 6px;
+        }
+
+        .content .important {
+            background: #2a1a1a;
+            border-left: 4px solid #e74c3c;
+            padding: 16px 20px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+
+        .content .important strong {
+            color: #e74c3c;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 24px;
+            color: #6c5ce7;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .back-link:hover {
+            color: #7c6cf7;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .header-left {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+
+            .header-links {
+                flex-wrap: wrap;
+                gap: 10px;
+            }
+
+            .header h1 {
+                font-size: 18px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .content h2 {
+                font-size: 22px;
+            }
+
+            .content h3 {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>Vortex-Strike: Rules</h1>
+                <div class="header-links">
+                    <a href="https://mryarost.github.io/StarLight/vortex_rules.html" target="_blank">Правила</a>
+                    <a href="https://mryarost.github.io/StarLight" target="_blank">Скачать</a>
+                    <a href="https://mryarost.github.io/StarLight/vortex.html" target="_blank">Сообщество</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <h2>📜 Правила игры</h2>
+            <h3>1. Правила для игры на офицальных серверах</h3>
+            <ul>
+                <li>1 - Использолвание читов запрещено, это легко может замечить анти-чит или администрация (Если игроки пожалуются и скинут докозательства) - бан по IP на офицальных серверах.</li>
+                <li>2 - Использование багов для того что-бы засорять сервер или использовать против настоящих игроков (жёсткие бусты) - бан по IP на офицальных серверах.</li>
+                <li>3 - Играть с одного IP больше 3 сеансов - кик со всех устройств.</li>
+            </ul>
+            <h2>📜 Правила сообщества</h2>
+
+            <!-- ===== ВСТАВЬ СВОЙ ТЕКСТ СЮДА ===== -->
+            <p>Обязательно прочитать перед побликацией своей карты</p>
+
+            <h3>1. Общие положения</h3>
+            <p>Просто так не кидать жалобу или жаловаться на пост, за это вы будете забанены на офицальных серверах.</p>
+
+            <h3>2. Правила для публикации!</h3>
+            <ul>
+                <li>1 - Если на вашей карте будет что-то связано с темами 18+ (убийства, кровь, что-то связаное со seksom) - бан по IP на офицальных серверах.</li>
+                <li>2 - Если что-то в описании или названии будет написано всякая дичь или что-то что на 1 пункте, или IP недиствительный - удаление поста</li>
+                <li>3 - Публикация карт которые не настроены - удаление карты</li>
+            </ul>
+
+            <h3>Ответственность несёте вы!</h3>
+
+            <div class="important">
+                <strong>⚠️ Важно:</strong> Нарушение правил может привести к блокировке вашего поста и аккаунта(сервера, карты и вашего IP).
+            </div>
+
+            <a href="https://mryarost.github.io/StarLight/vortex.html" class="back-link">← Вернуться в сообщество и творить!</a>
+        </div>
+    </div>
+</body>
+</html>
