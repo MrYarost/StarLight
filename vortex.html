@@ -465,7 +465,7 @@
             <div class="header-left">
                 <h1>Vortex-Strike: Community</h1>
                 <div class="header-links">
-                    <a href="https://mryarost.github.io/StarLight/vortex_rules.html target="_blank">Правила</a>
+                    <a href="https://mryarost.github.io/StarLight/vortex_rules.html" target="_blank">Правила</a>
                     <a href="https://mryarost.github.io/StarLight" target="_blank">Скачать</a>
                     <a href="https://mryarost.github.io/StarLight/vortex.html" target="_blank">Сообщество</a>
                 </div>
@@ -660,6 +660,7 @@
                         return;
                     }
 
+                    // ===== СОХРАНЯЕМ ПОЛНЫЙ JSON В КОЛОНКУ json_data =====
                     const { error } = await supabaseClient
                         .from('maps')
                         .insert([{
@@ -669,7 +670,8 @@
                             map_version: data.mapVersion || '1.0.0',
                             map_game_mode: data.mapGameMode || 'Не указан',
                             minutes_game: data.minutesGame || 5,
-                            likes: 0
+                            likes: 0,
+                            json_data: data // <-- ВЕСЬ JSON!
                         }]);
 
                     if (error) throw error;
@@ -772,7 +774,10 @@
         function downloadMap(id) {
             const map = maps.find(m => m.id === id);
             if (!map) return;
-            const json = JSON.stringify(map, null, 2);
+
+            // ===== СКАЧИВАЕМ ПОЛНЫЙ JSON ИЗ json_data =====
+            const jsonData = map.json_data || map;
+            const json = JSON.stringify(jsonData, null, 2);
             const blob = new Blob([json], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -785,7 +790,8 @@
         function copyMap(id) {
             const map = maps.find(m => m.id === id);
             if (!map) return;
-            const json = JSON.stringify(map, null, 2);
+            const jsonData = map.json_data || map;
+            const json = JSON.stringify(jsonData, null, 2);
             navigator.clipboard.writeText(json).then(() => {
                 showToast('✅ JSON скопирован!', 'success');
             }).catch(() => {
