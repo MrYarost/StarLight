@@ -5,457 +5,77 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Vortex-Strike — Сообщество</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, sans-serif; background: #0d0d0d; color: #e0e0e0; min-height: 100vh; padding: 20px; }
+        .container { max-width: 1000px; margin: 0 auto; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
-            background: #0d0d0d;
-            color: #e0e0e0;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        .header { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; background: #1a1a1a; border-radius: 12px; margin-bottom: 24px; border: 1px solid #2a2a2a; flex-wrap: wrap; gap: 12px; }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .header-left h1 { font-size: 22px; font-weight: 700; color: #fff; letter-spacing: 0.5px; }
+        .header-links { display: flex; gap: 18px; font-size: 14px; }
+        .header-links a { color: #aaa; text-decoration: none; transition: color 0.2s; }
+        .header-links a:hover { color: #fff; }
+        .sync-status { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #888; background: #0d0d0d; padding: 6px 14px; border-radius: 20px; border: 1px solid #2a2a2a; }
+        .sync-status .dot { width: 10px; height: 10px; border-radius: 50%; background: #00b894; }
+        .sync-status .dot.syncing { background: #fdcb6e; animation: pulse 0.8s infinite; }
+        .sync-status .dot.error { background: #e74c3c; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-        }
+        .panel { background: #1a1a1a; border-radius: 12px; padding: 24px; border: 1px solid #2a2a2a; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .panel-header h2 { font-size: 20px; color: #fff; }
+        .panel-header .badge { background: #2a2a2a; padding: 4px 12px; border-radius: 20px; font-size: 13px; color: #888; }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 16px 24px;
-            background: #1a1a1a;
-            border-radius: 12px;
-            margin-bottom: 24px;
-            border: 1px solid #2a2a2a;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
+        .btn { padding: 10px 20px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: #6c5ce7; color: #fff; }
+        .btn-primary:hover { background: #7c6cf7; transform: scale(1.02); }
+        .btn-outline { background: transparent; color: #888; border: 1px solid #2a2a2a; }
+        .btn-outline:hover { background: #252525; color: #fff; }
+        .btn-sm { padding: 6px 14px; font-size: 12px; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
 
-        .header-left {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .list { display: flex; flex-direction: column; gap: 12px; }
+        .list-item { background: #0d0d0d; border: 1px solid #2a2a2a; border-radius: 10px; padding: 16px 20px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; transition: border-color 0.2s; }
+        .list-item:hover { border-color: #3a3a3a; }
+        .list-item .info { display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 180px; }
+        .list-item .info .title { font-size: 18px; font-weight: 700; color: #fff; }
+        .list-item .info .details { font-size: 14px; color: #888; display: flex; flex-wrap: wrap; gap: 16px; }
+        .list-item .info .desc { font-size: 13px; color: #666; margin-top: 4px; }
+        .list-item .actions { display: flex; gap: 8px; flex-wrap: wrap; }
 
-        .header-left h1 {
-            font-size: 22px;
-            font-weight: 700;
-            color: #ffffff;
-            letter-spacing: 0.5px;
-        }
+        .empty-state { text-align: center; padding: 40px 20px; color: #666; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 12px; }
 
-        .header-links {
-            display: flex;
-            gap: 18px;
-            font-size: 14px;
-            color: #aaa;
+        .form-group { margin-bottom: 16px; }
+        .form-group label { display: block; margin-bottom: 6px; color: #aaa; font-size: 14px; font-weight: 500; }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px 16px; background: #0d0d0d; border: 1px solid #2a2a2a;
+            border-radius: 8px; color: #fff; font-size: 14px; transition: border-color 0.2s;
+            font-family: inherit;
         }
+        .form-group textarea { resize: vertical; min-height: 80px; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #6c5ce7; }
+        .form-group .hint { font-size: 12px; color: #666; margin-top: 4px; }
 
-        .header-links a {
-            color: #aaa;
-            text-decoration: none;
-            transition: color 0.2s;
-            cursor: pointer;
-        }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); align-items: center; justify-content: center; z-index: 1000; }
+        .modal.active { display: flex; }
+        .modal-content { background: #1a1a1a; border-radius: 16px; padding: 32px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto; border: 1px solid #2a2a2a; }
+        .modal-content h2 { color: #fff; margin-bottom: 20px; font-size: 24px; }
+        .modal-content .close-btn { float: right; background: none; border: none; color: #888; font-size: 24px; cursor: pointer; }
+        .modal-content .close-btn:hover { color: #fff; }
+        .modal-actions { display: flex; gap: 12px; margin-top: 20px; }
 
-        .header-links a:hover {
-            color: #ffffff;
-        }
-
-        .header .sync-status {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            color: #888;
-            background: #0d0d0d;
-            padding: 6px 14px;
-            border-radius: 20px;
-            border: 1px solid #2a2a2a;
-        }
-
-        .header .sync-status .dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #00b894;
-        }
-
-        .header .sync-status .dot.syncing {
-            background: #fdcb6e;
-            animation: pulse 0.8s infinite;
-        }
-
-        .header .sync-status .dot.error {
-            background: #e74c3c;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        .tabs {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 24px;
-        }
-
-        .tabs button {
-            flex: 1;
-            padding: 14px 20px;
-            background: #1a1a1a;
-            border: 1px solid #2a2a2a;
-            color: #888;
-            font-size: 16px;
-            font-weight: 600;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tabs button:hover {
-            background: #252525;
-            color: #ccc;
-        }
-
-        .tabs button.active {
-            background: #2a2a2a;
-            color: #fff;
-            border-color: #6c5ce7;
-            box-shadow: 0 0 20px rgba(108, 92, 231, 0.1);
-        }
-
-        .panel {
-            display: none;
-            background: #1a1a1a;
-            border-radius: 12px;
-            padding: 24px;
-            border: 1px solid #2a2a2a;
-        }
-
-        .panel.active {
-            display: block;
-        }
-
-        .panel-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 12px;
-        }
-
-        .panel-header h2 {
-            font-size: 20px;
-            color: #fff;
-        }
-
-        .panel-header .badge {
-            background: #2a2a2a;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            color: #888;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-primary {
-            background: #6c5ce7;
-            color: #fff;
-        }
-
-        .btn-primary:hover {
-            background: #7c6cf7;
-            transform: scale(1.02);
-        }
-
-        .btn-success {
-            background: #00b894;
-            color: #fff;
-        }
-
-        .btn-success:hover {
-            background: #00d2a0;
-            transform: scale(1.02);
-        }
-
-        .btn-outline {
-            background: transparent;
-            color: #888;
-            border: 1px solid #2a2a2a;
-        }
-
-        .btn-outline:hover {
-            background: #252525;
-            color: #fff;
-        }
-
-        .btn-sm {
-            padding: 6px 14px;
-            font-size: 12px;
-        }
-
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none !important;
-        }
-
-        .list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .list-item {
-            background: #0d0d0d;
-            border: 1px solid #2a2a2a;
-            border-radius: 10px;
-            padding: 16px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 12px;
-            transition: border-color 0.2s;
-        }
-
-        .list-item:hover {
-            border-color: #3a3a3a;
-        }
-
-        .list-item .info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            flex: 1;
-            min-width: 180px;
-        }
-
-        .list-item .info .title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #fff;
-        }
-
-        .list-item .info .details {
-            font-size: 14px;
-            color: #888;
-            display: flex;
-            flex-wrap: wrap;
-            gap: 16px;
-        }
-
-        .list-item .info .details span {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .list-item .actions {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px 20px;
-            color: #666;
-        }
-
-        .empty-state .icon {
-            font-size: 48px;
-            margin-bottom: 12px;
-        }
-
-        .form-group {
-            margin-bottom: 16px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 6px;
-            color: #aaa;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .form-group input {
-            width: 100%;
-            padding: 12px 16px;
-            background: #0d0d0d;
-            border: 1px solid #2a2a2a;
-            border-radius: 8px;
-            color: #fff;
-            font-size: 14px;
-            transition: border-color 0.2s;
-        }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: #6c5ce7;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-
-        .modal.active {
-            display: flex;
-        }
-
-        .modal-content {
-            background: #1a1a1a;
-            border-radius: 16px;
-            padding: 32px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid #2a2a2a;
-        }
-
-        .modal-content h2 {
-            color: #fff;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .modal-content .close-btn {
-            float: right;
-            background: none;
-            border: none;
-            color: #888;
-            font-size: 24px;
-            cursor: pointer;
-        }
-
-        .modal-content .close-btn:hover {
-            color: #fff;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .ip-copy {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .ip-copy code {
-            background: #0d0d0d;
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 13px;
-            color: #6c5ce7;
-            border: 1px solid #2a2a2a;
-            word-break: break-all;
-        }
-
-        .toast {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            padding: 14px 24px;
-            border-radius: 10px;
-            color: #fff;
-            font-weight: 600;
-            z-index: 9999;
-            opacity: 0;
-            transform: translateY(20px);
-            transition: all 0.3s ease;
-            pointer-events: none;
-        }
-
-        .toast.show {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .toast.success {
-            background: #00b894;
-        }
-
-        .toast.error {
-            background: #e74c3c;
-        }
+        .toast { position: fixed; bottom: 30px; right: 30px; padding: 14px 24px; border-radius: 10px; color: #fff; font-weight: 600; z-index: 9999; opacity: 0; transform: translateY(20px); transition: all 0.3s ease; pointer-events: none; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #00b894; }
+        .toast.error { background: #e74c3c; }
 
         @media (max-width: 600px) {
-            .list-item {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .list-item .actions {
-                justify-content: flex-start;
-            }
-
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .header-left {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 8px;
-            }
-
-            .header-links {
-                flex-wrap: wrap;
-                gap: 10px;
-            }
-
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .tabs button {
-                font-size: 14px;
-                padding: 10px 12px;
-            }
-
-            .panel {
-                padding: 16px;
-            }
-
-            .header .sync-status {
-                width: 100%;
-                justify-content: center;
-            }
+            .list-item { flex-direction: column; align-items: stretch; }
+            .header { flex-direction: column; align-items: stretch; }
+            .header-left { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .panel { padding: 16px; }
+            .sync-status { width: 100%; justify-content: center; }
         }
     </style>
 </head>
@@ -476,105 +96,100 @@
             </div>
         </div>
 
-        <div class="tabs">
-            <button class="active" data-tab="maps" onclick="switchTab('maps')">📁 Карты</button>
-            <button data-tab="servers" onclick="switchTab('servers')">🖥️ Сервера</button>
-        </div>
-
-        <!-- MAPS -->
-        <div id="mapsPanel" class="panel active">
+        <div class="panel">
             <div class="panel-header">
                 <h2>📁 Карты</h2>
                 <span class="badge" id="mapsCount">0 карт</span>
             </div>
 
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;">
-                <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
-                    📤 Загрузить проект
-                </button>
-                <input type="file" id="fileInput" accept=".json" style="display:none" onchange="loadProject(event)">
-                <div style="display: flex; gap: 6px; margin-left: auto;">
-                    <button class="btn btn-sm btn-outline active" id="mapsNewTab" onclick="switchMapsTab('new')">🆕 Новое</button>
-                    <button class="btn btn-sm btn-outline" id="mapsPopularTab" onclick="switchMapsTab('popular')">⭐ Популярное</button>
-                </div>
+            <div style="margin-bottom: 20px;">
+                <button class="btn btn-primary" onclick="openUploadModal()">📤 Загрузить карту</button>
             </div>
 
             <div id="mapsList" class="list"></div>
         </div>
-
-        <!-- SERVERS -->
-        <div id="serversPanel" class="panel">
-            <div class="panel-header">
-                <h2>🖥️ Сервера</h2>
-                <span class="badge" id="serversCount">0 серверов</span>
-            </div>
-
-            <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 16px;">
-                <button class="btn btn-success" onclick="openAddServer()">➕ Добавить сервер</button>
-                <div style="display: flex; gap: 6px; margin-left: auto;">
-                    <button class="btn btn-sm btn-outline active" id="newTab" onclick="switchServerTab('new')">🆕 Новое</button>
-                    <button class="btn btn-sm btn-outline" id="popularTab" onclick="switchServerTab('popular')">⭐ Популярное</button>
-                </div>
-            </div>
-
-            <div id="serversList" class="list"></div>
-        </div>
     </div>
 
-    <!-- MODAL ADD SERVER -->
-    <div id="addServerModal" class="modal">
+    <!-- МОДАЛ ЗАГРУЗКИ КАРТЫ -->
+    <div id="uploadModal" class="modal">
         <div class="modal-content">
-            <button class="close-btn" onclick="closeAddServer()">✕</button>
-            <h2>➕ Добавить сервер</h2>
+            <button class="close-btn" onclick="closeUploadModal()">✕</button>
+            <h2>📤 Загрузить карту</h2>
 
             <div class="form-group">
-                <label>Название сервера</label>
-                <input id="serverNameInput" placeholder="Мой крутой сервер">
-            </div>
-
-            <div class="form-group">
-                <label>IP сервера</label>
-                <input id="serverIpInput" placeholder="192.168.1.100:7777">
+                <label>Файл карты (.json)</label>
+                <input type="file" id="mapFileInput" accept=".json" onchange="onMapFileSelected(event)">
+                <div class="hint">Название карты берётся из поля <code>mapName</code> внутри файла.</div>
             </div>
 
             <div class="form-group">
                 <label>Название карты</label>
-                <input id="serverMapInput" placeholder="Bhop или Jair">
+                <input id="mapNameInput" placeholder="Заполнится из файла" readonly>
             </div>
 
             <div class="form-group">
-                <label>Максимум игроков</label>
-                <input id="serverMaxPlayersInput" type="number" placeholder="16" min="2" max="64">
+                <label>Доступность</label>
+                <select id="mapPrivateInput">
+                    <option value="false">🌐 Публичная (видна всем)</option>
+                    <option value="true">🔒 Приватная (только по ID)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>О чём карта</label>
+                <textarea id="mapDescInput" placeholder="Опишите карту: жанр, особенности, для какого режима..."></textarea>
             </div>
 
             <div class="modal-actions">
-                <button class="btn btn-primary" onclick="addServer()">Опубликовать</button>
-                <button class="btn btn-outline" onclick="closeAddServer()">Отмена</button>
+                <button class="btn btn-primary" onclick="uploadMap()">Опубликовать</button>
+                <button class="btn btn-outline" onclick="closeUploadModal()">Отмена</button>
             </div>
         </div>
     </div>
 
-    <!-- TOAST -->
     <div id="toast" class="toast"></div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         // ============================================================
-        // 1. НАСТРОЙКИ SUPABASE
+        // 1. КОНФИГ — URL API из GitHub
         // ============================================================
-        const SUPABASE_URL = 'https://pjzbvqenxzodgeqzibkj.supabase.co';
-        const SUPABASE_ANON_KEY = 'sb_publishable_UQ3orDY6jIeRv48FtpZDiA_yOiSaUIK';
+        const CONFIG_URL = 'https://raw.githubusercontent.com/MrYarost/StarLight/refs/heads/main/vortex-config/server.json';
+        let API_URL = '';
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        async function resolveApiUrl() {
+            try {
+                const res = await fetch(CONFIG_URL + '?t=' + Date.now(), { cache: 'no-store' });
+                if (!res.ok) throw new Error('HTTP ' + res.status);
+                const cfg = await res.json();
+                if (cfg && cfg.apiUrl) {
+                    API_URL = cfg.apiUrl.replace(/\/+$/, '');
+                    return true;
+                }
+                throw new Error('apiUrl отсутствует в конфиге');
+            } catch (e) {
+                console.warn('Не удалось получить конфиг:', e);
+                return false;
+            }
+        }
+
+        async function apiFetch(path, options = {}) {
+            if (!API_URL) throw new Error('API URL не определён');
+            const res = await fetch(API_URL + path, options);
+            if (!res.ok) {
+                let msg = 'HTTP ' + res.status;
+                try { const j = await res.json(); if (j.error) msg = j.error; } catch (_) {}
+                throw new Error(msg);
+            }
+            return res.json();
+        }
 
         // ============================================================
         // 2. ДАННЫЕ
         // ============================================================
         let maps = [];
-        let servers = [];
-        let mapsSortMode = 'new';
-        let serverSortMode = 'new';
         let isLoading = false;
+        let selectedFile = null;
+        let selectedMapName = '';
 
         // ============================================================
         // 3. UI ПОМОЩНИКИ
@@ -583,16 +198,9 @@
             const dot = document.getElementById('syncDot');
             const textEl = document.getElementById('syncText');
             dot.className = 'dot';
-            if (type === 'loading') {
-                dot.classList.add('syncing');
-                textEl.textContent = text || 'Загрузка...';
-            } else if (type === 'success') {
-                dot.style.background = '#00b894';
-                textEl.textContent = text || 'Синхронизировано';
-            } else if (type === 'error') {
-                dot.style.background = '#e74c3c';
-                textEl.textContent = text || 'Ошибка';
-            }
+            if (type === 'loading') { dot.classList.add('syncing'); textEl.textContent = text || 'Загрузка...'; }
+            else if (type === 'success') { dot.style.background = '#00b894'; textEl.textContent = text || 'Синхронизировано'; }
+            else if (type === 'error') { dot.style.background = '#e74c3c'; textEl.textContent = text || 'Ошибка'; }
         }
 
         function showToast(message, type = 'success') {
@@ -600,392 +208,198 @@
             toast.textContent = message;
             toast.className = 'toast ' + type + ' show';
             clearTimeout(toast._hideTimeout);
-            toast._hideTimeout = setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            toast._hideTimeout = setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
         // ============================================================
-        // 4. ЗАГРУЗКА ДАННЫХ
+        // 4. ЗАГРУЗКА СПИСКА КАРТ
         // ============================================================
-        async function loadFromSupabase() {
+        async function loadFromApi() {
             if (isLoading) return;
             isLoading = true;
             setSyncStatus('Загрузка...', 'loading');
-
             try {
-                const { data: mapsData, error: mapsError } = await supabaseClient
-                    .from('maps')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (mapsError) throw mapsError;
-                maps = mapsData || [];
-
-                const { data: serversData, error: serversError } = await supabaseClient
-                    .from('servers')
-                    .select('*')
-                    .order('created_at', { ascending: false });
-
-                if (serversError) throw serversError;
-                servers = serversData || [];
-
+                if (!API_URL) {
+                    const ok = await resolveApiUrl();
+                    if (!ok) throw new Error('Не удалось получить URL API');
+                }
+                const resp = await apiFetch('/api/maps?sort=new');
+                maps = resp.maps || [];
                 renderMaps();
-                renderServers();
                 setSyncStatus('Синхронизировано', 'success');
             } catch (e) {
                 console.error('Ошибка загрузки:', e);
                 setSyncStatus('Ошибка загрузки', 'error');
-                showToast('❌ Ошибка загрузки данных', 'error');
+                showToast('❌ ' + e.message, 'error');
                 renderMaps();
-                renderServers();
             }
-
             isLoading = false;
         }
 
         // ============================================================
-        // 5. КАРТЫ
+        // 5. РЕНДЕР СПИСКА
         // ============================================================
-        async function loadProject(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    if (!data.mapName) {
-                        showToast('❌ Неверный формат JSON!', 'error');
-                        return;
-                    }
-
-                    // ===== СОХРАНЯЕМ ПОЛНЫЙ JSON В КОЛОНКУ json_data =====
-                    const { error } = await supabaseClient
-                        .from('maps')
-                        .insert([{
-                            map_name: data.mapName,
-                            map_author: data.mapAuthor || 'Неизвестно',
-                            map_description: data.mapDescription || '',
-                            map_version: data.mapVersion || '1.0.0',
-                            map_game_mode: data.mapGameMode || 'Не указан',
-                            minutes_game: data.minutesGame || 5,
-                            likes: 0,
-                            json_data: data // <-- ВЕСЬ JSON!
-                        }]);
-
-                    if (error) throw error;
-
-                    await loadFromSupabase();
-                    showToast('✅ Карта "' + data.mapName + '" загружена!', 'success');
-                } catch (err) {
-                    showToast('❌ Ошибка: ' + err.message, 'error');
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
         function renderMaps() {
             const container = document.getElementById('mapsList');
             const count = document.getElementById('mapsCount');
 
-            let sorted = [...maps];
-            if (mapsSortMode === 'popular') {
-                sorted.sort((a, b) => (b.likes || 0) - (a.likes || 0));
-            } else {
-                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            }
-
-            if (sorted.length === 0) {
+            if (!maps.length) {
                 container.innerHTML = `
                     <div class="empty-state">
                         <div class="icon">📭</div>
                         <p>Нет загруженных карт</p>
-                        <p style="font-size: 14px; color: #555;">Нажми «Загрузить проект» чтобы добавить карту</p>
-                    </div>
-                `;
+                        <p style="font-size: 14px; color: #555;">Нажми «Загрузить карту» чтобы добавить</p>
+                    </div>`;
                 count.textContent = '0 карт';
                 return;
             }
 
-            count.textContent = sorted.length + ' карт';
+            count.textContent = maps.length + ' карт';
 
-            container.innerHTML = sorted.map((map) => {
-                const likedKey = 'liked_map_' + map.id;
-                const alreadyLiked = localStorage.getItem(likedKey) === 'true';
-
-                return `
-                    <div class="list-item">
-                        <div class="info">
-                            <div class="title">${map.map_name}</div>
-                            <div class="details">
-                                <span>👤 ${map.map_author || 'Неизвестно'}</span>
-                                <span>🎮 ${map.map_game_mode || 'Не указан'}</span>
-                                <span>📦 ${map.map_version || '1.0'}</span>
-                                <span>⏱ ${map.minutes_game || 5} мин</span>
-                                <span>⭐ ${map.likes || 0}</span>
-                            </div>
-                            <div style="font-size: 13px; color: #666; margin-top: 4px;">
-                                ${map.map_description || 'Без описания'}
-                            </div>
+            container.innerHTML = maps.map((map) => `
+                <div class="list-item">
+                    <div class="info">
+                        <div class="title">${escapeHtml(map.mapName)}</div>
+                        <div class="details">
+                            <span>🆔 ${map.id}</span>
+                            <span>🔒 ${map.isPrivate ? 'Приватная' : 'Публичная'}</span>
+                            <span>📥 ${map.downloads || 0}</span>
                         </div>
-                        <div class="actions">
-                            <button class="btn btn-sm btn-outline" 
-                                    onclick="likeMap(${map.id})" 
-                                    ${alreadyLiked ? 'disabled' : ''}>
-                                ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
-                            </button>
-                            <button class="btn btn-sm btn-primary" onclick="downloadMap(${map.id})">📥 Скачать</button>
-                            <button class="btn btn-sm btn-outline" onclick="copyMap(${map.id})">📋 Копировать</button>
-                        </div>
+                        ${map.description ? `<div class="desc">${escapeHtml(map.description)}</div>` : ''}
                     </div>
-                `;
-            }).join('');
+                    <div class="actions">
+                        <button class="btn btn-sm btn-primary" onclick="downloadMap('${map.id}')">📥 Скачать</button>
+                        <button class="btn btn-sm btn-outline" onclick="copyMap('${map.id}')">📋 Копировать JSON</button>
+                    </div>
+                </div>
+            `).join('');
         }
 
-        async function likeMap(id) {
-            const likedKey = 'liked_map_' + id;
-            if (localStorage.getItem(likedKey) === 'true') {
-                showToast('❌ Вы уже лайкнули эту карту!', 'error');
-                return;
+        function escapeHtml(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({
+                '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
+            }[c]));
+        }
+
+        // ============================================================
+        // 6. СКАЧИВАНИЕ / КОПИРОВАНИЕ
+        // ============================================================
+        async function fetchMapData(id) {
+            const res = await fetch(API_URL + '/api/maps/' + id);
+            if (!res.ok) throw new Error('Карта не найдена');
+            const data = await res.json();
+            return data.levelData || data;
+        }
+
+        async function downloadMap(id) {
+            try {
+                const jsonData = await fetchMapData(id);
+                const json = JSON.stringify(jsonData, null, 2);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = (maps.find(m => m.id === id)?.mapName || 'map') + '.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                await loadFromApi();
+            } catch (e) { showToast('❌ ' + e.message, 'error'); }
+        }
+
+        async function copyMap(id) {
+            try {
+                const jsonData = await fetchMapData(id);
+                const json = JSON.stringify(jsonData, null, 2);
+                navigator.clipboard.writeText(json).then(
+                    () => showToast('✅ JSON скопирован!', 'success'),
+                    () => {
+                        const ta = document.createElement('textarea');
+                        ta.value = json; document.body.appendChild(ta); ta.select();
+                        document.execCommand('copy'); ta.remove();
+                        showToast('✅ JSON скопирован!', 'success');
+                    }
+                );
+            } catch (e) { showToast('❌ ' + e.message, 'error'); }
+        }
+
+        // ============================================================
+        // 7. МОДАЛ ЗАГРУЗКИ
+        // ============================================================
+        function openUploadModal() {
+            selectedFile = null;
+            selectedMapName = '';
+            document.getElementById('mapFileInput').value = '';
+            document.getElementById('mapNameInput').value = '';
+            document.getElementById('mapDescInput').value = '';
+            document.getElementById('mapPrivateInput').value = 'false';
+            document.getElementById('uploadModal').classList.add('active');
+        }
+        function closeUploadModal() { document.getElementById('uploadModal').classList.remove('active'); }
+
+        function onMapFileSelected(event) {
+            const file = event.target.files[0];
+            if (!file) { selectedFile = null; selectedMapName = ''; document.getElementById('mapNameInput').value = ''; return; }
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    if (!data.mapName) {
+                        showToast('❌ В файле нет поля mapName', 'error');
+                        selectedFile = null; selectedMapName = '';
+                        document.getElementById('mapNameInput').value = '';
+                        event.target.value = '';
+                        return;
+                    }
+                    selectedFile = file;
+                    selectedMapName = data.mapName;
+                    document.getElementById('mapNameInput').value = data.mapName;
+                } catch (err) {
+                    showToast('❌ Неверный JSON: ' + err.message, 'error');
+                    selectedFile = null; selectedMapName = '';
+                    document.getElementById('mapNameInput').value = '';
+                    event.target.value = '';
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        async function uploadMap() {
+            if (!selectedFile) { showToast('❌ Выберите файл .json', 'error'); return; }
+            if (!selectedMapName) { showToast('❌ Название не найдено в файле', 'error'); return; }
+            if (!API_URL) {
+                const ok = await resolveApiUrl();
+                if (!ok) { showToast('❌ Нет URL API', 'error'); return; }
             }
+
+            const isPrivate = document.getElementById('mapPrivateInput').value;
+            const description = document.getElementById('mapDescInput').value.trim();
+
+            const fd = new FormData();
+            fd.append('mapName', selectedMapName);
+            fd.append('isPrivate', isPrivate);
+            fd.append('description', description);
+            fd.append('mapFile', selectedFile, selectedFile.name);
 
             try {
-                const map = maps.find(m => m.id === id);
-                if (!map) return;
-
-                const { error } = await supabaseClient
-                    .from('maps')
-                    .update({ likes: (map.likes || 0) + 1 })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                localStorage.setItem(likedKey, 'true');
-                await loadFromSupabase();
-                showToast('❤️ Лайк поставлен!', 'success');
-            } catch (e) {
-                showToast('❌ Ошибка: ' + e.message, 'error');
-                console.error(e);
-            }
-        }
-
-        function downloadMap(id) {
-            const map = maps.find(m => m.id === id);
-            if (!map) return;
-
-            // ===== СКАЧИВАЕМ ПОЛНЫЙ JSON ИЗ json_data =====
-            const jsonData = map.json_data || map;
-            const json = JSON.stringify(jsonData, null, 2);
-            const blob = new Blob([json], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = map.map_name + '.json';
-            a.click();
-            URL.revokeObjectURL(url);
-        }
-
-        function copyMap(id) {
-            const map = maps.find(m => m.id === id);
-            if (!map) return;
-            const jsonData = map.json_data || map;
-            const json = JSON.stringify(jsonData, null, 2);
-            navigator.clipboard.writeText(json).then(() => {
-                showToast('✅ JSON скопирован!', 'success');
-            }).catch(() => {
-                const textarea = document.createElement('textarea');
-                textarea.value = json;
-                document.body.appendChild(textarea);
-                textarea.select();
-                document.execCommand('copy');
-                textarea.remove();
-                showToast('✅ JSON скопирован!', 'success');
-            });
-        }
-
-        function switchMapsTab(mode) {
-            mapsSortMode = mode;
-            document.getElementById('mapsNewTab').classList.toggle('active', mode === 'new');
-            document.getElementById('mapsPopularTab').classList.toggle('active', mode === 'popular');
-            renderMaps();
+                const res = await fetch(API_URL + '/api/maps/upload', { method: 'POST', body: fd });
+                if (!res.ok) {
+                    const j = await res.json().catch(() => ({}));
+                    throw new Error(j.error || 'HTTP ' + res.status);
+                }
+                closeUploadModal();
+                await loadFromApi();
+                showToast('✅ Карта "' + selectedMapName + '" загружена!', 'success');
+            } catch (e) { showToast('❌ Ошибка: ' + e.message, 'error'); }
         }
 
         // ============================================================
-        // 6. СЕРВЕРА
+        // 8. ЗАПУСК
         // ============================================================
-        function renderServers() {
-            const container = document.getElementById('serversList');
-            const count = document.getElementById('serversCount');
-
-            let sorted = [...servers];
-            if (serverSortMode === 'popular') {
-                sorted.sort((a, b) => b.likes - a.likes);
-            } else {
-                sorted.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-            }
-
-            if (sorted.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="icon">🖥️</div>
-                        <p>Нет серверов</p>
-                        <p style="font-size: 14px; color: #555;">Нажми «Добавить сервер» чтобы опубликовать свой</p>
-                    </div>
-                `;
-                count.textContent = '0 серверов';
-                return;
-            }
-
-            count.textContent = sorted.length + ' серверов';
-
-            container.innerHTML = sorted.map((server) => {
-                const likedKey = 'liked_' + server.id;
-                const alreadyLiked = localStorage.getItem(likedKey) === 'true';
-
-                return `
-                    <div class="list-item">
-                        <div class="info">
-                            <div class="title">${server.server_name}</div>
-                            <div class="details">
-                                <span>🗺️ ${server.map_name}</span>
-                                <span>🕹️ ${server.max_players}</span>
-                                <span>⭐ ${server.likes}</span>
-                            </div>
-                            <div class="details" style="margin-top: 4px;">
-                                <span class="ip-copy">
-                                    🌐 <code>${server.ip}</code>
-                                    <button class="btn btn-sm btn-outline" onclick="copyIp('${server.ip}')">📋 Копировать IP</button>
-                                </span>
-                            </div>
-                        </div>
-                        <div class="actions">
-                            <button class="btn btn-sm btn-outline" 
-                                    onclick="likeServer(${server.id})" 
-                                    ${alreadyLiked ? 'disabled' : ''}>
-                                ${alreadyLiked ? '✅ Лайкнут' : '❤️ Лайк'}
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        async function likeServer(id) {
-            const likedKey = 'liked_' + id;
-            if (localStorage.getItem(likedKey) === 'true') {
-                showToast('❌ Вы уже лайкнули этот сервер!', 'error');
-                return;
-            }
-
-            try {
-                const server = servers.find(s => s.id === id);
-                if (!server) return;
-
-                const { error } = await supabaseClient
-                    .from('servers')
-                    .update({ likes: server.likes + 1 })
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                localStorage.setItem(likedKey, 'true');
-                await loadFromSupabase();
-                showToast('❤️ Лайк поставлен!', 'success');
-            } catch (e) {
-                showToast('❌ Ошибка: ' + e.message, 'error');
-                console.error(e);
-            }
-        }
-
-        function copyIp(ip) {
-            navigator.clipboard.writeText(ip).then(() => {
-                showToast('✅ IP скопирован: ' + ip, 'success');
-            }).catch(() => {
-                const input = document.createElement('input');
-                input.value = ip;
-                document.body.appendChild(input);
-                input.select();
-                document.execCommand('copy');
-                input.remove();
-                showToast('✅ IP скопирован: ' + ip, 'success');
-            });
-        }
-
-        // ============================================================
-        // 7. ДОБАВЛЕНИЕ СЕРВЕРА
-        // ============================================================
-        function openAddServer() {
-            document.getElementById('addServerModal').classList.add('active');
-            document.getElementById('serverNameInput').value = '';
-            document.getElementById('serverIpInput').value = '';
-            document.getElementById('serverMapInput').value = '';
-            document.getElementById('serverMaxPlayersInput').value = '';
-        }
-
-        function closeAddServer() {
-            document.getElementById('addServerModal').classList.remove('active');
-        }
-
-        async function addServer() {
-            const name = document.getElementById('serverNameInput').value.trim();
-            const ip = document.getElementById('serverIpInput').value.trim();
-            const map = document.getElementById('serverMapInput').value.trim();
-            const maxPlayers = parseInt(document.getElementById('serverMaxPlayersInput').value);
-
-            if (!name || !ip || !map || isNaN(maxPlayers) || maxPlayers < 2) {
-                showToast('❌ Заполните все поля корректно!', 'error');
-                return;
-            }
-
-            try {
-                const { error } = await supabaseClient
-                    .from('servers')
-                    .insert([{
-                        server_name: name,
-                        ip: ip,
-                        map_name: map,
-                        max_players: maxPlayers,
-                        current_players: 0,
-                        likes: 0
-                    }]);
-
-                if (error) throw error;
-
-                await loadFromSupabase();
-                closeAddServer();
-                showToast('✅ Сервер "' + name + '" опубликован!', 'success');
-            } catch (e) {
-                showToast('❌ Ошибка: ' + e.message, 'error');
-            }
-        }
-
-        // ============================================================
-        // 8. ВКЛАДКИ
-        // ============================================================
-        function switchTab(tab) {
-            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
-            document.querySelector(`.tabs button[data-tab="${tab}"]`).classList.add('active');
-            document.getElementById('mapsPanel').classList.toggle('active', tab === 'maps');
-            document.getElementById('serversPanel').classList.toggle('active', tab === 'servers');
-        }
-
-        function switchServerTab(mode) {
-            serverSortMode = mode;
-            document.getElementById('newTab').classList.toggle('active', mode === 'new');
-            document.getElementById('popularTab').classList.toggle('active', mode === 'popular');
-            renderServers();
-        }
-
-        // ============================================================
-        // 9. ЗАПУСК
-        // ============================================================
-        document.getElementById('addServerModal').addEventListener('click', function(e) {
-            if (e.target === this) closeAddServer();
+        document.getElementById('uploadModal').addEventListener('click', function(e) {
+            if (e.target === this) closeUploadModal();
         });
-
-        loadFromSupabase();
+        loadFromApi();
     </script>
 </body>
 </html>
