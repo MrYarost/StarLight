@@ -94,7 +94,7 @@
         </div>
     </div>
 
-    <!-- МОДАЛ ЗАГРУЗКИ КАРТЫ -->
+        <!-- МОДАЛ ЗАГРУЗКИ КАРТЫ -->
     <div id="uploadModal" class="modal">
         <div class="modal-content">
             <button class="close-btn" onclick="closeUploadModal()">✕</button>
@@ -119,12 +119,25 @@
                 <label>О чём карта</label>
                 <textarea id="mapDescInput" placeholder="Опишите карту: жанр, особенности..."></textarea>
             </div>
+    
+            <!-- Блок с выданным ID (стоит НАД modal-actions во всю ширину) -->
+            <div id="uploadResultBox" style="display: none; background: #1e293b; border: 1px solid #38bdf8; border-radius: 8px; padding: 14px; margin-bottom: 15px; text-align: center;">
+                <div style="color: #94a3b8; font-size: 13px; margin-bottom: 4px;">Карта опубликована! Ваш ID для скачивания:</div>
+                <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+                    <span id="generatedMapId" style="color: #38bdf8; font-size: 26px; font-weight: bold; letter-spacing: 2px;">0000</span>
+                    <button type="button" onclick="copyMapId()" style="background: #334155; color: #fff; border: none; border-radius: 6px; padding: 6px 12px; cursor: pointer;">
+                        Копировать
+                    </button>
+                </div>
+            </div>
+    
             <div class="modal-actions">
-                <button class="btn btn-primary" onclick="uploadMap()">Опубликовать</button>
-                <button class="btn btn-outline" onclick="closeUploadModal()">Отмена</button>
+                <button id="publishBtn" class="btn btn-primary" onclick="uploadMap()">Опубликовать</button>
+                <button id="cancelUploadBtn" class="btn btn-outline" onclick="closeUploadModal()">Отмена</button>
             </div>
         </div>
     </div>
+
 
     <div id="toast" class="toast"></div>
 
@@ -247,10 +260,6 @@
                         </div>
                         ${map.description ? `<div class="desc">${escapeHtml(map.description)}</div>` : ''}
                     </div>
-                    <div class="actions">
-                        <button class="btn btn-sm btn-primary" onclick="downloadMap('${map.id}')">📥 Скачать</button>
-                        <button class="btn btn-sm btn-outline" onclick="copyMap('${map.id}')">📋 Копировать JSON</button>
-                    </div>
                 </div>
             `).join('');
         }
@@ -260,51 +269,6 @@
                 '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'
             }[c]));
         }
-
-        // ============================================================
-        // 6. СКАЧИВАНИЕ / КОПИРОВАНИЕ
-        // ============================================================
-        async function fetchMapData(id) {
-            const res = await fetch(API_URL + '/api/maps/' + id);
-            if (!res.ok) throw new Error('Карта не найдена');
-            const data = await res.json();
-            return data.levelData || data;
-        }
-
-        async function downloadMap(id) {
-            try {
-                const jsonData = await fetchMapData(id);
-                const json = JSON.stringify(jsonData, null, 2);
-                const blob = new Blob([json], { type: 'application/json' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = (maps.find(m => m.id === id)?.mapName || 'map') + '.json';
-                a.click();
-                URL.revokeObjectURL(url);
-                await loadFromApi();
-            } catch (e) { showToast('❌ ' + e.message, 'error'); }
-        }
-
-        async function copyMap(id) {
-            try {
-                const jsonData = await fetchMapData(id);
-                const json = JSON.stringify(jsonData, null, 2);
-                navigator.clipboard.writeText(json).then(
-                    () => showToast('✅ JSON скопирован!', 'success'),
-                    () => {
-                        const ta = document.createElement('textarea');
-                        ta.value = json; document.body.appendChild(ta); ta.select();
-                        document.execCommand('copy'); ta.remove();
-                        showToast('✅ JSON скопирован!', 'success');
-                    }
-                );
-            } catch (e) { showToast('❌ ' + e.message, 'error'); }
-        }
-
-        // ============================================================
-        // 7. МОДАЛ ЗАГРУЗКИ
-        // ============================================================
         function openUploadModal() {
             selectedFile = null;
             selectedMapName = '';
@@ -312,9 +276,20 @@
             document.getElementById('mapNameInput').value = '';
             document.getElementById('mapDescInput').value = '';
             document.getElementById('mapPrivateInput').value = 'false';
+
+            // Сбрасываем блок с ID и кнопки в исходное состояние
+            document.getElementById('uploadResultBox').style.display = 'none';
+            const publishBtn = document.getElementById('publishBtn');
+            if (publishBtn) publishBtn.style.display = 'inline-block';
+            const cancelBtn = document.getElementById('cancelUploadBtn');
+            if (cancelBtn) cancelBtn.textContent = 'Отмена';
+
             document.getElementById('uploadModal').classList.add('active');
         }
-        function closeUploadModal() { document.getElementById('uploadModal').classList.remove('active'); }
+
+        function closeUploadModal() { 
+            document.getElementById('uploadModal').classList.remove('active'); 
+        }
 
         function onMapFileSelected(event) {
             const file = event.target.files[0];
@@ -354,31 +329,54 @@
 
             const isPrivate = document.getElementById('mapPrivateInput').value;
             const description = document.getElementById('mapDescInput').value.trim();
-
+            
             const fd = new FormData();
             fd.append('mapName', selectedMapName);
             fd.append('isPrivate', isPrivate);
             fd.append('description', description);
             fd.append('mapFile', selectedFile, selectedFile.name);
 
+            const publishBtn = document.getElementById('publishBtn');
+            if (publishBtn) {
+                publishBtn.disabled = true;
+                publishBtn.textContent = 'Загрузка...';
+            }
+
             try {
                 const res = await fetch(API_URL + '/api/maps/upload', { method: 'POST', body: fd });
+                const data = await res.json().catch(() => ({}));
+                
                 if (!res.ok) {
-                    const j = await res.json().catch(() => ({}));
-                    throw new Error(j.error || 'HTTP ' + res.status);
+                    throw new Error(data.error || 'HTTP ' + res.status);
                 }
-                closeUploadModal();
+
+                // Показываем выданный ID прямо внутри модального окна (не закрывая его)
+                document.getElementById('generatedMapId').textContent = data.id;
+                document.getElementById('uploadResultBox').style.display = 'block';
+                
+                if (publishBtn) publishBtn.style.display = 'none';
+                const cancelBtn = document.getElementById('cancelUploadBtn');
+                if (cancelBtn) cancelBtn.textContent = 'Закрыть';
+
                 await loadFromApi();
-                showToast('✅ Карта "' + selectedMapName + '" загружена!', 'success');
-            } catch (e) { showToast('❌ Ошибка: ' + e.message, 'error'); }
+                showToast('✅ Карта "' + selectedMapName + '" опубликована! ID: ' + data.id, 'success');
+            } catch (e) { 
+                showToast('❌ Ошибка: ' + e.message, 'error'); 
+            } finally {
+                if (publishBtn) {
+                    publishBtn.disabled = false;
+                    publishBtn.textContent = 'Опубликовать';
+                }
+            }
         }
 
-        // ============================================================
-        // 8. ЗАПУСК
-        // ============================================================
-        document.getElementById('uploadModal').addEventListener('click', function(e) {
-            if (e.target === this) closeUploadModal();
-        });
+        function copyMapId() {
+            const idText = document.getElementById('generatedMapId').textContent;
+            navigator.clipboard.writeText(idText).then(() => {
+                showToast('📋 ID карты (' + idText + ') скопирован!', 'success');
+            });
+        }
+
         loadFromApi();
     </script>
 </body>
